@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: MailService
+Bundle-SymbolicName: com.ipv.sensetrace.mailservice
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: IPV
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: com.ipv.sensetrace.rdfdmservice,
+ javax.activation,
+ javax.net,
+ javax.net.ssl,
+ org.osgi.framework;version="1.7.0"
+Service-Component:  OSGI-INF/componentControl.xml 
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ mail.jar
+Export-Package: com.ipv.sensetrace.mailservice

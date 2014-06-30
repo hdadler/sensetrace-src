@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="com.ipv.sensetrace.delphinftpservice.DelphinFTPService">
+   <implementation class="com.ipv.sensetrace.delphinftpservice.DelphinFTPService"/>
+   <service>
+      <provide interface="com.ipv.sensetrace.delphinftpservice.IDelphinFTPService"/>
+   </service>
+</scr:component>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="Command Provider for Command Service">
+   <implementation class="com.ipv.sensetrace.commandservice.ServiceComponent"/>
+   <service>
+      <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
+   </service>
+<reference bind="BindControlService" cardinality="1..1" interface="com.ipv.sensetrace.controllingservice.IControlService" name="IControlService" policy="static" unbind="UnbindControlService"/>
+
+</scr:component>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" name="com.ipv.sensetrace.MailService">
+   <implementation class="com.ipv.sensetrace.mailservice.MailService"/>
+   <reference bind="RegRDFDmService" cardinality="1..1" interface="com.ipv.sensetrace.rdfdmservice.IRDFDmService" name="IRDFDmService" policy="static" unbind="UnregRDFDmService"/>
+   <service>
+      <provide interface="com.ipv.sensetrace.mailservice.IMailService"/>
+   </service>
+ </scr:component>

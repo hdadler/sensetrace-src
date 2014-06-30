@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" name="com.ipv.sensetrace.cepservice.CEPDatastreamAnalyzerService">
+   <implementation class="com.ipv.sensetrace.cepservice.CEPDatastreamAnalyzerService"/>
+   <reference bind="RegRDFDmService" cardinality="1..1" interface="com.ipv.sensetrace.rdfdmservice.IRDFDmService" name="IRDFDmService" policy="static" unbind="UnregRDFDmService"/>
+   <service>
+      <provide interface="com.ipv.sensetrace.cepservice.ICEPDatastreamAnalyzerService"/>
+   </service>
+   <reference bind="RegCEPHandlerService" cardinality="1..1" interface="com.ipv.sensetrace.cephandlerservice.ICEPHandlerService" name="ICEPHandlerService" policy="static"/>
+ </scr:component>

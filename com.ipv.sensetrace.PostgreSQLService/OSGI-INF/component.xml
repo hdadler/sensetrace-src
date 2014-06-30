@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" immediate="false" name="com.ipv.sensetrace.pgsqlservice.PgService">
+   <implementation class="com.ipv.sensetrace.pgsqlservice.PgService"/>
+   <service>
+      <provide interface="com.ipv.sensetrace.pgsqlservice.IPgService"/>
+   </service>
+</scr:component>

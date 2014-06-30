@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CEPHandlerService
+Bundle-SymbolicName: com.ipv.sensetrace.CEPHandlerService
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: IPV
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: 
+ com.ipv.sensetrace.mailservice,
+ com.ipv.sensetrace.pgsqlservice,
+ com.ipv.sensetrace.rdfdmservice,
+ org.osgi.framework;version="1.7.0"
+Service-Component:  OSGI-INF/componentControl.xml 
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: 
+ .
+Export-Package: com.ipv.sensetrace.cephandlerservice

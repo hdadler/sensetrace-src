@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PostgreSQLService
+Bundle-SymbolicName: com.ipv.sensetrace.PostgreSQLService
+Bundle-Version: 1.0.0.qualifier
+Import-Package: org.osgi.framework;version="1.3.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: com.ipv.sensetrace.pgsqlservice
+Service-Component: OSGI-INF/component.xml 
+Bundle-ClassPath: .,
+ postgresql.jar
+Bundle-Vendor: IPV
