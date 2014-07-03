@@ -37,33 +37,6 @@ public class ServiceComponent implements CommandProvider {
 			return;
 		} else {
 
-			// Sensors for niti
-			/*
-			 * String[] sensors = {"14","16","19","21","22","24","25",
-			 * "15","17","25","38","39","40","41","43","71","69","67","66","68",
-			 * "80"
-			 * ,"81","82","83","85","94","95","96","97","99","18","70","84",
-			 * "42", "98", "20","72","86","44","100"};
-			 * controlservice.SetSensors(sensors);
-			 * controlservice.SetDate("2009-01-01 00:00:00",
-			 * "2013-01-01 00:00:00"); String[] sensors =
-			 * {"155","154","151","150","152","149","153", "197",
-			 * "196","193","192","194","191", "195",
-			 * "204","203","200","199","201","198", "202",
-			 * "169","168","165","164","166","163","167",
-			 * "218","217","214","213","215","212","216",
-			 * "131","122","124","125"}; controlservice.SetSensors(sensors);
-			 * controlservice.SetDate("2007-01-01 00:00:00",
-			 * "2013-01-01 00:00:00");
-			 */
-			// (String[] sensors = {"84","86","18","20","69","70","72"};
-			/*
-			 * String[] sensors = {"11","13","21","22","122","131","132","133"};
-			 * controlservice.SetSensors(sensors);
-			 * controlservice.SetDate("2007-01-01 00:00:00",
-			 * "2011-01-01 00:00:00");
-			 */
-
 			System.out.println("Date_From: " + date_from);
 			System.out.println("Date_To: " + date_to);
 			controlservice.SetDate(date_from, date_to);
@@ -109,7 +82,7 @@ public class ServiceComponent implements CommandProvider {
 		}
 		if (arg.equalsIgnoreCase("dl")
 				&& (word.equals("ftp") || word.equals("folder"))) {
-
+			controlservice.SetTimeIntervallFromLastImportTillNow();
 			// Disable avg check, else program would hang if sensor fails
 			controlservice.Setcheck_if_avg_exists(false);
 			// first initialize cep
@@ -140,7 +113,7 @@ public class ServiceComponent implements CommandProvider {
 			downloadfromdatalogger_ftp = false;
 			downloadfromdatalogger_folder = false;
 			generate_v_data_stream = true;
-			controlservice.SetTimeIntervallFromLastImportTillNow();
+			//controlservice.SetTimeIntervallFromLastImportTillNow();
 			// At first classification and errorcheck for 1 second data
 			// in one day window
 			// Average is calculated automatically
@@ -185,7 +158,7 @@ public class ServiceComponent implements CommandProvider {
 			errorcheck_static = false;
 			errorcheck_dynamic = true;
 			classify = true;
-			controlservice.SetTimeIntervallFromLastImportTillNow();
+			//controlservice.SetTimeIntervallFromLastImportTillNow();
 			controlservice.SetVirtualDsOptions(classify, errorcheck_dynamic,
 					errorcheck_static);
 			controlservice.SetWindowAndResolution("1day", new String[] {

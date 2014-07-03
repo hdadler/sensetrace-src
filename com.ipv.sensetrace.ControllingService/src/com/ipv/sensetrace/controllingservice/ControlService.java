@@ -22,7 +22,6 @@ import com.ipv.sensetrace.mailservice.MailService;
 import com.ipv.sensetrace.pgsqlservice.PgService;
 import com.ipv.sensetrace.rdfdmservice.RDFDmService;
 
-
 public class ControlService implements IControlService {
 
 	/**
@@ -107,13 +106,35 @@ public class ControlService implements IControlService {
 
 	public void SetTimeIntervallFromLastImportTillNow() {
 		// System.out.println("pgsqlservice.GetLastImportDate()"+pgsqlservice.GetLastImportDate());
-		timeintervall[0] = pgsqlservice.GetLastImportDate();
-		System.out.println("System.currentTimeMillis()"
-				+ System.currentTimeMillis());
-		System.out
-				.println("ConvertMillisecondsToSQLTime(System.currentTimeMillis())"
-						+ timeformat.ConvertMillisecondsToSQLTime(System
-								.currentTimeMillis()));
+		if (pgsqlservice.GetLastImportDate() != null) {
+			timeintervall[0] = pgsqlservice.GetLastImportDate();
+		} else {
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					System.in));
+			System.out
+					.print("\nThe database does not contain a value for LastImportDate.\n "
+							+ "Therefore Sensetrace needs to know from now on how many days in the\n "
+							+ "past the import should start. Please enter value in days:  ");
+
+			try {
+
+				timeintervall[0] = timeformat
+						.ConvertMillisecondsToSQLTime(System
+								.currentTimeMillis()
+								- (Long.valueOf(reader.readLine()) * 86400000));
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Wrong format. Please enter value in days!");
+				SetTimeIntervallFromLastImportTillNow();
+				// e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+			}
+
+		}
+		System.out.println("LastImportDate: " + timeintervall[0]);
 		timeintervall[1] = timeformat.ConvertMillisecondsToSQLTime(System
 				.currentTimeMillis());
 	}
@@ -132,8 +153,15 @@ public class ControlService implements IControlService {
 
 	public void SetTimeIntervallFromTwoMonthBeforeLastImportTillNow() {
 		// set timefrom 63 days before the last importdate
-		long timefrom_l = timeformat.ConvertSQLTimeToTimestamp(pgsqlservice
-				.GetLastImportDate()) - 5443200;
+		long timefrom_l = 0;
+		if (pgsqlservice.GetLastImportDate() != null) {
+			timefrom_l = timeformat.ConvertSQLTimeToTimestamp(pgsqlservice
+					.GetLastImportDate()) - 5443200;
+		}
+		// Database empty, first import
+		else {
+			timefrom_l = timeformat.ConvertSQLTimeToTimestamp(timeintervall[0]) - 5443200;
+		}
 		timeintervall[0] = timeformat.ConvertMillisecondsToSQLTime(timefrom_l);
 		timeintervall[1] = timeformat.ConvertMillisecondsToSQLTime(System
 				.currentTimeMillis());
