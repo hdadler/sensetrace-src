@@ -67,6 +67,7 @@ public class ServiceComponent implements CommandProvider {
 		}
 		timer.SetKillAfterOneHour(false);
 		boolean downloadfromcsv = false;
+		boolean downloadfromsolarlogjs = false;
 		boolean downloadfromdatalogger_ftp = true;
 		boolean downloadfromdatalogger_folder = false;
 		boolean generate_v_data_stream = false;
@@ -106,14 +107,14 @@ public class ServiceComponent implements CommandProvider {
 			// First import the data
 			controlservice.start(false, downloadfromcsv,
 					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
-					generate_v_data_stream);
+					downloadfromsolarlogjs, generate_v_data_stream);
 			// Generate a sensor datastream from lastimport to now
 
 			downloadfromcsv = false;
 			downloadfromdatalogger_ftp = false;
 			downloadfromdatalogger_folder = false;
 			generate_v_data_stream = true;
-			//controlservice.SetTimeIntervallFromLastImportTillNow();
+			// controlservice.SetTimeIntervallFromLastImportTillNow();
 			// At first classification and errorcheck for 1 second data
 			// in one day window
 			// Average is calculated automatically
@@ -139,7 +140,7 @@ public class ServiceComponent implements CommandProvider {
 			// controlservice.DeleteFromCLTable(true);
 			controlservice.start(false, downloadfromcsv,
 					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
-					generate_v_data_stream);
+					downloadfromsolarlogjs, generate_v_data_stream);
 			// Averages for errorsensors are calculated automatically, now
 			// calculate avgs of other sensors also
 			// controlservice.CalcAvgsForGivenSensors();
@@ -158,14 +159,14 @@ public class ServiceComponent implements CommandProvider {
 			errorcheck_static = false;
 			errorcheck_dynamic = true;
 			classify = true;
-			//controlservice.SetTimeIntervallFromLastImportTillNow();
+			// controlservice.SetTimeIntervallFromLastImportTillNow();
 			controlservice.SetVirtualDsOptions(classify, errorcheck_dynamic,
 					errorcheck_static);
 			controlservice.SetWindowAndResolution("1day", new String[] {
 					"1min", "1h", "15min" });
 			controlservice.start(false, downloadfromcsv,
 					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
-					generate_v_data_stream);
+					downloadfromsolarlogjs,generate_v_data_stream);
 			System.out
 					.println("3)classification and errorcheck in one day intervall in year timewindow");
 			try {
@@ -188,7 +189,7 @@ public class ServiceComponent implements CommandProvider {
 					"1day", "1month" });
 			controlservice.start(false, downloadfromcsv,
 					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
-					generate_v_data_stream);
+					downloadfromsolarlogjs,generate_v_data_stream);
 			controlservice.CalcAvgsForErrorSensors();
 			controlservice.SetLastImportDate();
 			controlservice.SendMail();
@@ -249,7 +250,7 @@ public class ServiceComponent implements CommandProvider {
 			// System.out.println("Start import");
 			controlservice.start(true, downloadfromcsv,
 					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
-					generate_v_data_stream);
+					downloadfromsolarlogjs,generate_v_data_stream);
 
 			System.out
 					.println("2) classification and errorcheck in one day intervall");
@@ -301,13 +302,119 @@ public class ServiceComponent implements CommandProvider {
 			controlservice.SendMail();
 			System.exit(0);
 
+		}
+
+		// Download from solarlog
+		else if (arg.equalsIgnoreCase("solarlog") && word.equals("js")) {
+			System.out.println("Import from solarlog js files");
+			controlservice.SetTimeIntervallFromLastImportTillNow();
+			// Disable avg check, else program would hang if sensor fails
+			controlservice.Setcheck_if_avg_exists(false);
+			// first initialize cep
+			controlservice.SetLastImportDateToNull();
+			controlservice.Init(true);
+
+			downloadfromsolarlogjs = true;
+			downloadfromdatalogger_ftp = false;
+			downloadfromdatalogger_folder = false;
+			downloadfromcsv = false;
+
+			// First import the data
+			generate_v_data_stream = false;
+			controlservice.start(false, downloadfromcsv,
+					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
+					downloadfromsolarlogjs,generate_v_data_stream);
+			// Generate a sensor datastream from lastimport to now
+
+			downloadfromsolarlogjs = false;
+			generate_v_data_stream = true;
+			// controlservice.SetTimeIntervallFromLastImportTillNow();
+			// At first classification and errorcheck for 1 second data
+			// in one day window
+			// Average is calculated automatically
+			boolean errorcheck_static = true;
+			boolean errorcheck_dynamic = true;
+			boolean classify = true;
+			System.out
+					.println("1) classification and errorcheck in one day intervall of one second data.");
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// controlservice.SetTimeIntervallFromLastImportTillNow();
+			// System.out.println("SetVirtualDsOptions");
+			controlservice.SetVirtualDsOptions(classify, errorcheck_dynamic,
+					errorcheck_static);
+			controlservice.SetWindowAndResolution("1day",
+					new String[] { "1min" });
+			// System.out.println("Start import");
+			// controlservice.DeleteFromCLTable(true);
+			controlservice.start(false, downloadfromcsv,
+					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
+					downloadfromsolarlogjs,generate_v_data_stream);
+			// Averages for errorsensors are calculated automatically, now
+			// calculate avgs of other sensors also
+			// controlservice.CalcAvgsForGivenSensors();
+			System.out
+					.println("2) classification and errorcheck in one day intervall");
+			controlservice.CalcAvgsForAllSensors();
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// At second classification and errorcheck in one day interval
+			// in one day window
+			errorcheck_static = false;
+			errorcheck_dynamic = true;
+			classify = true;
+			// controlservice.SetTimeIntervallFromLastImportTillNow();
+			controlservice.SetVirtualDsOptions(classify, errorcheck_dynamic,
+					errorcheck_static);
+			controlservice.SetWindowAndResolution("1day", new String[] {
+					"1min", "1h", "15min" });
+			controlservice.start(false, downloadfromcsv,
+					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
+					downloadfromsolarlogjs,generate_v_data_stream);
+			System.out
+					.println("3)classification and errorcheck in one day intervall in year timewindow");
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// At third classification and errorcheck from
+			// begin of month till now in year timewindow
+			errorcheck_static = false;
+			errorcheck_dynamic = true;
+			classify = true;
+			controlservice
+					.SetTimeIntervallFromTwoMonthBeforeLastImportTillNow();
+			controlservice.SetVirtualDsOptions(classify, errorcheck_dynamic,
+					errorcheck_static);
+			controlservice.SetWindowAndResolution("1year", new String[] {
+					"1day", "1month" });
+			controlservice.start(false, downloadfromcsv,
+					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
+					downloadfromsolarlogjs,generate_v_data_stream);
+			controlservice.CalcAvgsForErrorSensors();
+			controlservice.SetLastImportDate();
+			controlservice.SendMail();
+			System.exit(0);
 		} else if (arg.equalsIgnoreCase("csv")) {
 			downloadfromcsv = true;
 			downloadfromdatalogger_ftp = false;
 			downloadfromdatalogger_folder = false;
 			generate_v_data_stream = false;
 			controlservice.start(false, downloadfromcsv,
-					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
+					downloadfromsolarlogjs,downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
 					generate_v_data_stream);
 		}
 		if (arg.equalsIgnoreCase("languages")) {
@@ -328,6 +435,7 @@ public class ServiceComponent implements CommandProvider {
 		boolean downloadfromcsv = false;
 		boolean downloadfromdatalogger_ftp = false;
 		boolean downloadfromdatalogger_folder = false;
+		boolean downloadfromsolarlogjs =false;
 		boolean generate_v_data_stream = true;
 		boolean errorcheck_dynamic = false;
 		boolean errorcheck_static = false;
@@ -360,7 +468,7 @@ public class ServiceComponent implements CommandProvider {
 
 			controlservice.Init(true);
 			controlservice.SetDate(date_from, date_to);
-			//System.out.print("command: " + command);
+			// System.out.print("command: " + command);
 			if (command.contains("errorcheck_dynamic")) {
 				errorcheck_dynamic = true;
 			}
@@ -368,7 +476,7 @@ public class ServiceComponent implements CommandProvider {
 				errorcheck_static = true;
 			}
 			if (command.contains("errorcheck_static_and_dynamic")) {
-				//System.out.print("command found: " + command);
+				// System.out.print("command found: " + command);
 				errorcheck_static = true;
 				errorcheck_dynamic = true;
 			}
@@ -398,7 +506,7 @@ public class ServiceComponent implements CommandProvider {
 			System.out.println("errorcheck_static" + errorcheck_static);
 			controlservice.start(false, downloadfromcsv,
 					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
-					generate_v_data_stream);
+					downloadfromsolarlogjs,generate_v_data_stream);
 
 			// Averages for errorsensors are calculated automatically, now
 			// calculate avgs of other sensors also
@@ -424,7 +532,7 @@ public class ServiceComponent implements CommandProvider {
 					"1min", "1h", "15min", "1day" });
 			controlservice.start(false, downloadfromcsv,
 					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
-					generate_v_data_stream);
+					downloadfromsolarlogjs,generate_v_data_stream);
 			System.out
 					.println("3) Classification and/or errorcheck in one day intervall in year timewindow");
 			try {
@@ -443,7 +551,7 @@ public class ServiceComponent implements CommandProvider {
 
 			controlservice.start(false, downloadfromcsv,
 					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
-					generate_v_data_stream);
+					downloadfromsolarlogjs,generate_v_data_stream);
 
 			// This is important, because values of sensors could have changed
 			// controlservice.CalcAvgsForErrorSensors();

@@ -135,16 +135,22 @@ public class RDFDmService implements IRDFDmService {
 		if (key == "definition") {
 			return rdfsensorresult.GetNextDefinition();
 		}
-		if (key == "mysqlid") {
+		else if (key == "mysqlid") {
 			return rdfsensorresult.GetNextMysqlid();
 		} else if (key == "postgresid") {
-			return rdfsensorresult.GetNextPostgresid();
+			String tmp=rdfsensorresult.GetNextPostgresid();
+			return tmp;
 		} else if (key == "lowerlimit") {
 			return rdfsensorresult.GetNextlowerLimit();
+		} else if (key == "csvarray") {
+			String tmp=rdfsensorresult.GetNextCSVArray();
+			return tmp;
 		} else if (key == "upperlimit") {
 			return rdfsensorresult.GetNextupperLimit();
 		} else if (key == "ftplink") {
 			return rdfsensorresult.GetNextFTPLink();
+		} else if (key == "solarlogfilenamelink") {
+			return rdfsensorresult.GetNextSolarlogLink();
 		} else if (key == "dlfilenamelink") {
 			return rdfsensorresult.GetNextDlFilenameLink();
 		} else if (key == "differencetopreviousvalue") {

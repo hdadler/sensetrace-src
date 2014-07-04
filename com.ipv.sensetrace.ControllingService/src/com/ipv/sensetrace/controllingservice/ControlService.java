@@ -13,6 +13,7 @@ import com.ipv.sensetrace.controllingservice.intern.ImportDataloggerFTP;
 import com.ipv.sensetrace.controllingservice.intern.ImportDataloggerFolder;
 import com.ipv.sensetrace.controllingservice.intern.ImportSensorDataFromDelphineCSV;
 import com.ipv.sensetrace.controllingservice.intern.ImportSensorDataFromPg;
+import com.ipv.sensetrace.controllingservice.intern.ImportSolarlogJS;
 import com.ipv.sensetrace.controllingservice.intern.ProcessSensorMLFiles;
 import com.ipv.sensetrace.controllingservice.intern.TimeFormat;
 import com.ipv.sensetrace.delphincsvservice.DelphinCSVService;
@@ -21,6 +22,7 @@ import com.ipv.sensetrace.mailservice.MailService;
 //import com.ipv.sensetrace.mysqlservice.MySQLService;
 import com.ipv.sensetrace.pgsqlservice.PgService;
 import com.ipv.sensetrace.rdfdmservice.RDFDmService;
+import com.ipv.sensetrace.solarlogcsvservice.SolarlogCSVService;
 
 public class ControlService implements IControlService {
 
@@ -32,6 +34,7 @@ public class ControlService implements IControlService {
 	private static PgService pgsqlservice;
 	private static DelphinFTPService dlftpservice;
 	private static DelphinCSVService dlcsvservice;
+	private static SolarlogCSVService solarlogcvservice;
 	private static CEPDatastreamAnalyzerService cepservice;
 	// private CEPHandlerService cephandlersrevice;
 	private static MailService mailservice;
@@ -70,7 +73,7 @@ public class ControlService implements IControlService {
 	}
 
 	void activate() {
-		System.out.println("Activate ControllingService.");
+		System.out.println("Activate ControlService.");
 	}
 
 	public void DeleteFromCLTable(boolean justavgs) {
@@ -451,6 +454,7 @@ public class ControlService implements IControlService {
 	public void start(boolean test, boolean downloadfromcsv,
 			boolean downloadfromdatalogger_ftp,
 			boolean downloadfromdatalogger_folder,
+			boolean downloadfromsolarlogjs,
 			boolean generate_v_data_stream) {
 
 		TimeFormat timeformat = new TimeFormat();
@@ -938,7 +942,48 @@ public class ControlService implements IControlService {
 			mailservice.RegisterStaticProblem(msg);
 			// mailservice.SendStatusMail();
 
-		} else if (downloadfromcsv) {
+		} // Normaler importmodus vom Datenlogger über ein Verzeichnis
+		else if (downloadfromsolarlogjs) {
+			System.out.println("Import from folder containing solarlog js files.");
+
+			/*
+			 * ImportSensorDataFromMySQL importer = new
+			 * ImportSensorDataFromMySQL( mysqlservice, pgsqlservice,
+			 * rdfservice, conf);
+			 */
+			// Jtalis sollte immer Initialisiert werden
+			// cepservice.Init();
+			// cepservice.SetRange("1sec");
+			ImportSolarlogJS importer = new ImportSolarlogJS(
+					cepservice, pgsqlservice, rdfservice, solarlogcvservice, conf);
+
+			while (!importer.IsAllBatched()) {
+				System.out.println("Import");
+				importer.StartImport();
+				lastimportdate = importer.RemoveOldestFilesToBatch();
+			}
+			// SetLastImportDate(lastimportdate);
+			// System.out.println("lastimportdate:" + lastimportdate);
+			// Check for Sensordata older 10 hours
+			pgsqlservice.GetNotUpdatedSensors();
+			String msg = "";
+			while (pgsqlservice.GotoNextElement()) {
+				String id = pgsqlservice.GetElement("sensorid");
+				String name = rdfservice.ResolveSensor(id, true);
+				// System.out.println("id: " + id);
+
+				if (name != null) {
+					// System.out.println("name: " + name);
+					msg = msg + name + " (id=" + id + ")" + "<br>";
+				}
+				// System.out.println("Data older 10 hours: "
+				// + pgsqlservice.GetElement("sensorid"));
+			}
+			System.out.println("msg: " + msg);
+			mailservice.RegisterStaticProblem(msg);
+			// mailservice.SendStatusMail();
+
+		}else if (downloadfromcsv) {
 			System.out.println("Import from csv file.");
 			/*
 			 * ImportSensorDataFromMySQL importer = new
@@ -999,7 +1044,7 @@ public class ControlService implements IControlService {
 		 */
 		init_for_pg_bundle();
 		pgsqlservice.CreateConnection(conf.getProperty("pgsqlcs"),
-				conf.getProperty("pgsqluser"), conf.getProperty("pgsqlpwd"));
+				conf.getProperty("pgsqluser"), conf.getProperty("pgsqlpwd"), conf.getProperty("highest_resolution"));
 		// I know I should not use the service here but just for demonstration
 		// System.out.println(service.getQuote());
 	}
@@ -1040,13 +1085,13 @@ public class ControlService implements IControlService {
 		}
 	}
 
-	// Method will be used by DS to set the RDFDm service
+	// Method will be used by DS to set the Delphin service
 	public synchronized void RegDelphinCSVService(DelphinCSVService service) {
 		System.out.println("Register DelphinCSVService");
 		dlcsvservice = service;
 	}
 
-	// Method will be used by DS to unregister the RDFDm service
+	// Method will be used by DS to unregister the Delphin service
 	public synchronized void UnregDelphinCSVService(DelphinCSVService service) {
 		System.out.println("Unregister DelphinCSVService");
 		if (dlcsvservice == service) {
@@ -1054,6 +1099,19 @@ public class ControlService implements IControlService {
 		}
 	}
 
+	// Method will be used by DS to set the RDFDm service
+	public synchronized void RegSolarlogCSVService(SolarlogCSVService service) {
+		System.out.println("Register SolarlogCSVService");
+		solarlogcvservice = service;
+	}
+
+	// Method will be used by DS to unregister the RDFDm service
+	public synchronized void UnregSolarlogCSVService(SolarlogCSVService service) {
+		System.out.println("Unregister SolarlogCSVService");
+		if (solarlogcvservice == service) {
+			solarlogcvservice = null;
+		}
+	}
 	// Method will be used by DS to set the CEP service
 	public synchronized void RegCEPService(CEPDatastreamAnalyzerService service) {
 		System.out.println("Register CEPService");

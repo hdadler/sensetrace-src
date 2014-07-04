@@ -30,10 +30,11 @@ public class RDFResultSensors {
 				+ "PREFIX rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
 				+ "PREFIX time: <http://www.w3.org/2006/time#> "
-				+ "SELECT  ?mysqlid ?postgresid ?definition ?lowerlimit ?upperlimit ?ftplink ?dlfolderlink ?differencetopreviousvalue "
+				+ "SELECT  ?mysqlid ?postgresid ?definition ?lowerlimit ?csvarray ?upperlimit ?ftplink ?solarlogfolderlink ?dlfolderlink ?differencetopreviousvalue "
 				+ "WHERE { "
 				+ "?o dc:definition ?definition."
 				+ "?o dc:lowerlimit ?lowerlimit."
+				+ "?o dc:csvarray ?csvarray."
 				+ "?o dc:upperlimit ?upperlimit."
 				+ "?o dc:differencetopreviousvalue ?differencetopreviousvalue."
 				+ "?o dc:mysqlid ?mysqlid."
@@ -41,10 +42,11 @@ public class RDFResultSensors {
 				+ "?p dc:sens ?o."
 				+ "?p dc:ftp ?ftplink ."
 				+ "?p dc:dlfolderlink ?dlfolderlink ."
+				+ "?p dc:solarlogfolderlink ?solarlogfolderlink ."
 				+ " FILTER (NOT EXISTS { ?o dc:active \"false\". } ) } order by ?mysqlid";
 		 System.out.println(queryString);
 		query(model, queryString);
-
+		//printquery();
 	}
 
 	public void QueryAllSensors(Model model) {
@@ -56,9 +58,10 @@ public class RDFResultSensors {
 				+ "PREFIX rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
 				+ "PREFIX time: <http://www.w3.org/2006/time#> "
-				+ "SELECT  ?mysqlid ?postgresid ?definition ?lowerlimit ?upperlimit ?ftplink ?dlfolderlink ?differencetopreviousvalue "
+				+ "SELECT  ?mysqlid ?postgresid ?definition ?lowerlimit ?csvarray ?upperlimit ?ftplink ?dlfolderlink  ?solarlogfolderlink ?differencetopreviousvalue "
 				+ "WHERE { "
 				+ "?o dc:definition ?definition."
+				+ "?o dc:csvarray ?csvarray."
 				+ "?o dc:lowerlimit ?lowerlimit."
 				+ "?o dc:upperlimit ?upperlimit."
 				+ "?o dc:differencetopreviousvalue ?differencetopreviousvalue."
@@ -67,10 +70,12 @@ public class RDFResultSensors {
 				+ "?p dc:sens ?o."
 				+ "?p dc:ftp ?ftplink ."
 				+ "?p dc:dlfolderlink ?dlfolderlink ."
+				+ "?p dc:solarlogfolderlink ?solarlogfolderlink ."
 				+ " } order by ?mysqlid";
 		 System.out.println(queryString);
 		System.out.println("Query all sensors!");
 		query(model, queryString);
+		//printquery();
 		}
 
 	public void query(Model model, String queryString) {
@@ -126,9 +131,11 @@ public class RDFResultSensors {
 		itmysql = mysql_pg_list.iterator();
 		itpostgres = mysql_pg_list.iterator();
 		itlowlimit = mysql_pg_list.iterator();
+		itcsvarray = mysql_pg_list.iterator();
 		ituplimit = mysql_pg_list.iterator();
 		itftplink = mysql_pg_list.iterator();
 		itdlfolderlink = mysql_pg_list.iterator();
+		itsolarlogfolderlink = mysql_pg_list.iterator();
 		itdefinition = mysql_pg_list.iterator();
 		itdifferencetopreviousvalue = mysql_pg_list.iterator();
 		//itdifferencetopreviousvalue2 = mysql_pg_list.iterator();
@@ -137,11 +144,13 @@ public class RDFResultSensors {
 	Iterator<Bindings> itmysql;
 	Iterator<Bindings> itpostgres;
 	Iterator<Bindings> itlowlimit;
+	Iterator<Bindings> itcsvarray;
 	Iterator<Bindings> ituplimit;
 	Iterator<Bindings> itftplink;
 	Iterator<Bindings> itdefinition;
 	Iterator<Bindings> itdifferencetopreviousvalue;
 	Iterator<Bindings> itdlfolderlink;
+	Iterator<Bindings> itsolarlogfolderlink;
 	//Iterator<Bindings> itdifferencetopreviousvalue2;
 
 	public String GetNextMysqlid() {
@@ -179,6 +188,15 @@ public class RDFResultSensors {
 		} else
 			return null;
 	}
+	
+	public String GetNextCSVArray() {
+
+		if (itcsvarray.hasNext()) {
+			// System.out.println(it.next());
+			return itcsvarray.next().csvarray.value;
+		} else
+			return null;
+	}
 
 	public String GetNextFTPLink() {
 
@@ -194,6 +212,15 @@ public class RDFResultSensors {
 		if (itdlfolderlink.hasNext()) {
 			// System.out.println(it.next());
 			return itdlfolderlink.next().dlfolderlink.value;
+		} else
+			return null;
+	}
+	
+	public String GetNextSolarlogLink() {
+
+		if (itsolarlogfolderlink.hasNext()) {
+			// System.out.println(it.next());
+			return itsolarlogfolderlink.next().solarlogfolderlink.value;
 		} else
 			return null;
 	}
@@ -227,6 +254,11 @@ public class RDFResultSensors {
 		public String type;
 
 	};
+	public static class csvarray {
+		public String value;
+		public String type;
+
+	};
 
 	public static class upperlimit {
 		public String value;
@@ -255,6 +287,12 @@ public class RDFResultSensors {
 		public String type;
 
 	};
+	
+	public static class solarlogfolderlink {
+		public String value;
+		public String type;
+
+	};
 
 	public static class definition {
 		public String value;
@@ -273,9 +311,11 @@ public class RDFResultSensors {
 		public Postgresid postgresid;
 		public creationdate creationdate;
 		public lowerlimit lowerlimit;
+		public csvarray csvarray;
 		public upperlimit upperlimit;
 		public ftplink ftplink;
 		public dlfolderlink dlfolderlink;
+		public solarlogfolderlink solarlogfolderlink;
 		public definition definition;
 		public differencetopreviousvalue differencetopreviousvalue;
 		// public String mysqlid;

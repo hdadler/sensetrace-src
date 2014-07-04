@@ -25,12 +25,13 @@ public class PgService implements IPgService {
 	java.sql.Statement st_err = null;
 	java.sql.Statement st_jtalis = null;
 
-	//PreparedStatement ps_jtalis;
+	// PreparedStatement ps_jtalis;
 	PreparedStatement ps_con;
 
 	ResultSet rs = null;
-	//ResultSet rs_err = null;
-	//ResultSet rs_jtalis = null;
+
+	// ResultSet rs_err = null;
+	// ResultSet rs_jtalis = null;
 
 	public void StartCopyFromCSV() {
 		try {
@@ -62,7 +63,7 @@ public class PgService implements IPgService {
 							+ "' order by timestamp");
 		}
 		if (rs_jtalis.next() && rs_jtalis.getString(1) != null) {
-			result= rs_jtalis.getFloat(1);
+			result = rs_jtalis.getFloat(1);
 			rs_jtalis.close();
 			return result;
 
@@ -284,8 +285,9 @@ public class PgService implements IPgService {
 		// System.out.println("return timestamp: " + GetElement("timestamp"));
 		if (GetElement("timestamp") == null) {
 			System.out
-					.println("Fatal error: Sensor not found in table Registry_Last_Entries!");
-			System.exit(0);
+					.println("Fatal error or first import? Sensor not found in table Registry_Last_Entries!");
+			//System.exit(0);
+			return null;
 		}
 		return GetElement("timestamp");
 
@@ -423,16 +425,6 @@ public class PgService implements IPgService {
 			}
 		}
 
-		/*
-		 * try { con.commit(); } catch (SQLException e) { System.out.println(e);
-		 * Exception exception = e; while (((SQLException)
-		 * exception).getNextException() != null) {
-		 * System.out.println(((SQLException) exception) .getNextException());
-		 * // whatever you want to print out // of exception exception =
-		 * ((SQLException) exception).getNextException(); } }
-		 */
-
-		// System.out.println("Committed " + counts.length + " updates");
 	}
 
 	public void Commit_Con() {
@@ -454,75 +446,50 @@ public class PgService implements IPgService {
 		// System.out.println("Committed " + counts.length + " updates");
 	}
 
-/*	public void ExecuteErrorBatch2() {
+	/*
+	 * public void ExecuteErrorBatch2() {
+	 * 
+	 * try { st_err.executeBatch(); } catch (SQLException e) {
+	 * System.out.println(e); Exception exception = e; while (((SQLException)
+	 * exception).getNextException() != null) {
+	 * System.out.println(((SQLException) exception) .getNextException()); //
+	 * whatever you want to print out // of exception exception =
+	 * ((SQLException) exception).getNextException(); } }
+	 * 
+	 * try { con_err.commit(); } catch (SQLException e) { System.out.println(e);
+	 * Exception exception = e; while (((SQLException)
+	 * exception).getNextException() != null) {
+	 * System.out.println(((SQLException) exception) .getNextException()); //
+	 * whatever you want to print out // of exception exception =
+	 * ((SQLException) exception).getNextException(); } }
+	 * 
+	 * // System.out.println("Committed " + counts.length + " updates"); }
+	 */
 
-		try {
-			st_err.executeBatch();
-		} catch (SQLException e) {
-			System.out.println(e);
-			Exception exception = e;
-			while (((SQLException) exception).getNextException() != null) {
-				System.out.println(((SQLException) exception)
-						.getNextException()); // whatever you want to print out
-												// of exception
-				exception = ((SQLException) exception).getNextException();
-			}
-		}
+	/*
+	 * public void ExecuteJtalisBatch() {
+	 * 
+	 * try { ps_jtalis.executeBatch(); } catch (SQLException e) {
+	 * System.out.println(e); Exception exception = e; while (((SQLException)
+	 * exception).getNextException() != null) {
+	 * System.out.println(((SQLException) exception) .getNextException()); //
+	 * whatever you want to print out // of exception exception =
+	 * ((SQLException) exception).getNextException(); } }
+	 * 
+	 * 
+	 * 
+	 * try { con_jtalis.commit(); } catch (SQLException e) {
+	 * System.out.println(e); Exception exception = e; while (((SQLException)
+	 * exception).getNextException() != null) {
+	 * System.out.println(((SQLException) exception) .getNextException()); //
+	 * whatever you want to print out // of exception exception =
+	 * ((SQLException) exception).getNextException(); } }
+	 * 
+	 * // System.out.println("Committed " + counts.length + " updates"); }
+	 */
 
-		try {
-			con_err.commit();
-		} catch (SQLException e) {
-			System.out.println(e);
-			Exception exception = e;
-			while (((SQLException) exception).getNextException() != null) {
-				System.out.println(((SQLException) exception)
-						.getNextException()); // whatever you want to print out
-												// of exception
-				exception = ((SQLException) exception).getNextException();
-			}
-		}
-
-		// System.out.println("Committed " + counts.length + " updates");
-	}*/
-
-	
-	/*public void ExecuteJtalisBatch() {
-
-		try {
-			ps_jtalis.executeBatch();
-		} catch (SQLException e) {
-			System.out.println(e);
-			Exception exception = e;
-			while (((SQLException) exception).getNextException() != null) {
-				System.out.println(((SQLException) exception)
-						.getNextException()); // whatever you want to print out
-												// of exception
-				exception = ((SQLException) exception).getNextException();
-			}
-		}
-
-		
-
-		try {
-			con_jtalis.commit();
-		} catch (SQLException e) {
-			System.out.println(e);
-			Exception exception = e;
-			while (((SQLException) exception).getNextException() != null) {
-				System.out.println(((SQLException) exception)
-						.getNextException()); // whatever you want to print out
-												// of exception
-				exception = ((SQLException) exception).getNextException();
-			}
-		}
-
-		// System.out.println("Committed " + counts.length + " updates");
-	}
-	*/
-
-	
-
-	public boolean CreateConnection(String cs, String user, String pwd) {
+	public boolean CreateConnection(String cs, String user, String pwd,
+			String resolution) {
 		// String url = "jdbc:mysql://" + "129.69.22.115/pv-data";
 		// String user = "pv-data";
 		// String password = "mysql";
@@ -563,7 +530,20 @@ public class PgService implements IPgService {
 			rs.close();
 			// st.close();
 			// Handler for bulk insert into Rawdata
-			String sql = "INSERT INTO public.\"Rawdata\" (timestamp, sensorid, value) values (?::timestamp, ?::smallint, ?::real)";
+			String sql = "";
+			if (resolution.contains("1sec")) {
+				sql = "INSERT INTO public.\"Rawdata\" (timestamp, sensorid, value) values (?::timestamp, ?::smallint, ?::real)";
+			}
+			// Etalis can work with 1 min data or one second data at maximum
+			// resolution
+			else if (resolution.contains("1min")) {
+				sql = "INSERT INTO public.\"Data_1m_avg\" (timestamp, sensorid, value) values (?::timestamp, ?::smallint, ?::real)";
+			}
+			else
+			{
+				System.out.println("Error: Resolution must be 1min or 1sec.");
+				System.exit(0);
+			}
 			ps_con = con.prepareStatement(sql);
 		} catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(PgService.class.getName());
@@ -644,8 +624,9 @@ public class PgService implements IPgService {
 			st_jtalis.setFetchSize(50);
 			// Streaming Mode
 			// Handler for bulk insert into Errortable
-			//String sql = "INSERT INTO public.\"ErrorData\" (timestamp, sensorid, value) values (?::timestamp, ?::smallint, ?::real)";
-			//ps_jtalis = con_jtalis.prepareStatement(sql);
+			// String sql =
+			// "INSERT INTO public.\"ErrorData\" (timestamp, sensorid, value) values (?::timestamp, ?::smallint, ?::real)";
+			// ps_jtalis = con_jtalis.prepareStatement(sql);
 
 			/*
 			 * st = con.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
@@ -707,7 +688,7 @@ public class PgService implements IPgService {
 					+ "' and timestamp<='"
 					+ timeformat.ConvertMillisecondsToSQLTime(to)
 					+ "' and sensorid=" + sensorid);
-			//ExecuteErrorBatch();
+			// ExecuteErrorBatch();
 			st_err.executeBatch();
 			con_err.commit();
 			String sql = "INSERT INTO public.\"ErrorData\" (timestamp, sensorid, value) values (?::timestamp, ?::smallint, ?::real)";
@@ -773,7 +754,7 @@ public class PgService implements IPgService {
 					+ to
 					+ "' and sensorid="
 					+ sensorid);
-			//ExecuteErrorBatch();
+			// ExecuteErrorBatch();
 			st_err.executeBatch();
 			con_err.commit();
 			String sql = "INSERT INTO public.\"ErrorData_User\" (timestamp, sensorid, value) values (?::timestamp, ?::smallint, ?::real)";
@@ -800,7 +781,6 @@ public class PgService implements IPgService {
 			ps.close();
 			con_err.commit();
 
-			
 		} catch (SQLException exception) {
 			// TODO Auto-generated catch block
 			// exception.printStackTrace();
@@ -809,21 +789,19 @@ public class PgService implements IPgService {
 				exception = exception.getNextException();
 			}
 
-			
 		}
 	}
 
-
-	
 	public void AddCorrectedSensorToJtalisBatch(long from, long to,
 			String sensorid, String value) {
 		try {
-			st_jtalis.addBatch("delete from public.\"ErrorData\" where timestamp>= '"
-					+ timeformat.ConvertMillisecondsToSQLTime(from)
-					+ "' and timestamp<='"
-					+ timeformat.ConvertMillisecondsToSQLTime(to)
-					+ "' and sensorid=" + sensorid);
-			//ExecuteErrorBatch();
+			st_jtalis
+					.addBatch("delete from public.\"ErrorData\" where timestamp>= '"
+							+ timeformat.ConvertMillisecondsToSQLTime(from)
+							+ "' and timestamp<='"
+							+ timeformat.ConvertMillisecondsToSQLTime(to)
+							+ "' and sensorid=" + sensorid);
+			// ExecuteErrorBatch();
 			st_jtalis.executeBatch();
 			con_jtalis.commit();
 			String sql = "INSERT INTO public.\"ErrorData\" (timestamp, sensorid, value) values (?::timestamp, ?::smallint, ?::real)";
@@ -850,7 +828,6 @@ public class PgService implements IPgService {
 			ps.close();
 			con_jtalis.commit();
 
-
 		} catch (SQLException exception) {
 			// TODO Auto-generated catch block
 			// exception.printStackTrace();
@@ -861,19 +838,16 @@ public class PgService implements IPgService {
 
 		}
 	}
-	
-	
 
-	
-	public void AddClRuleToBatch(long from, long to,
-			String clid) {
+	public void AddClRuleToBatch(long from, long to, String clid) {
 		try {
-			st_jtalis.addBatch("delete from public.\"Classification\" where timestamp>= '"
-					+ timeformat.ConvertMillisecondsToSQLTime(from)
-					+ "' and timestamp<='"
-					+ timeformat.ConvertMillisecondsToSQLTime(to)
-					+ "' and clid=" + clid);
-			//ExecuteErrorBatch();
+			st_jtalis
+					.addBatch("delete from public.\"Classification\" where timestamp>= '"
+							+ timeformat.ConvertMillisecondsToSQLTime(from)
+							+ "' and timestamp<='"
+							+ timeformat.ConvertMillisecondsToSQLTime(to)
+							+ "' and clid=" + clid);
+			// ExecuteErrorBatch();
 			st_jtalis.executeBatch();
 			con_jtalis.commit();
 			String sql = "INSERT INTO public.\"Classification\" (timestamp, clid) values (?::timestamp, ?::smallint)";
@@ -925,34 +899,24 @@ public class PgService implements IPgService {
 			 */
 		}
 	}
-	/*public void AddClRuleToBatchold(String time, String clid) {
-		try {
-			
-			st_jtalis
-					.addBatch("INSERT INTO public.\"Classification\" SELECT DISTINCT '"
-							+ time
-							+ "'::timestamp, '"
-							+ clid
-							+ "'::smallint "
-							+ " WHERE NOT EXISTS (SELECT * FROM public.\"Classification\""
-							+ " WHERE clid= '"
-							+ clid
-							+ "' and timestamp='"
-		
 
-			// date +"'," + sensorid + "," + value + ")");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Exception exception = e;
-			while (((PSQLException) exception).getNextException() != null) {
-				System.out.println(((PSQLException) exception)
-						.getNextException()); // whatever you want to print out
-												// of exception
-				exception = ((PSQLException) exception).getNextException();
-			}
-		}
-	}*/
+	/*
+	 * public void AddClRuleToBatchold(String time, String clid) { try {
+	 * 
+	 * st_jtalis
+	 * .addBatch("INSERT INTO public.\"Classification\" SELECT DISTINCT '" +
+	 * time + "'::timestamp, '" + clid + "'::smallint " +
+	 * " WHERE NOT EXISTS (SELECT * FROM public.\"Classification\"" +
+	 * " WHERE clid= '" + clid + "' and timestamp='"
+	 * 
+	 * 
+	 * // date +"'," + sensorid + "," + value + ")"); } catch (SQLException e) {
+	 * // TODO Auto-generated catch block e.printStackTrace(); Exception
+	 * exception = e; while (((PSQLException) exception).getNextException() !=
+	 * null) { System.out.println(((PSQLException) exception)
+	 * .getNextException()); // whatever you want to print out // of exception
+	 * exception = ((PSQLException) exception).getNextException(); } } }
+	 */
 
 	public void DeleteFromErrorTableByUser(ArrayList<String> errorids,
 			String timefrom, String timeto) {
@@ -1679,7 +1643,6 @@ public class PgService implements IPgService {
 		if (LastTimestamp != null) {
 			try {
 
-		
 				st.addBatch("DELETE FROM \"public\".\"Registry_LastEntries\""
 						+ "WHERE sensorid='" + LastSensorID + "'");
 				st.addBatch("INSERT into \"public\".\"Registry_LastEntries\" values ('"
@@ -1706,5 +1669,6 @@ public class PgService implements IPgService {
 		}
 
 	}
+
 
 }

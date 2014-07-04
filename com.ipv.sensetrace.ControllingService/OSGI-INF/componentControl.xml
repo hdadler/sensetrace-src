@@ -7,6 +7,8 @@
   <reference bind="RegMailService" cardinality="1..1" interface="com.ipv.sensetrace.mailservice.IMailService" name="IMailService" policy="static" unbind="UnregMailService"/>
   <reference bind="RegDelphinCSVService" cardinality="1..1" interface="com.ipv.sensetrace.delphincsvservice.IDelphinCSVService" name="IDelphinCSVService" policy="static" unbind="UnregDelphinCSVService"/>
   <reference bind="RegDelphinFTPService" cardinality="1..1" interface="com.ipv.sensetrace.delphinftpservice.IDelphinFTPService" name="IDelphinFTPService" policy="static" unbind="UnregDelphinFTPService"/>
+  <reference bind="RegSolarlogCSVService" cardinality="1..1" interface="com.ipv.sensetrace.solarlogcsvservice.ISolarlogCSVService" name="ISolarlogCSVService" policy="static" unbind="UnregSolarlogCSVService"/>
+  
    <service>
     <provide interface="com.ipv.sensetrace.controllingservice.IControlService"/>
     </service>
