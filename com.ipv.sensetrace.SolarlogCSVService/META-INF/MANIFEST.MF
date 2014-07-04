@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SolarlogCSVService
+Bundle-SymbolicName: com.ipv.sensetrace.solarlogcsvservice
+Bundle-Version: 1.0.0.qualifier
+Import-Package: org.osgi.framework;version="1.3.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: com.ipv.sensetrace.solarlogcsvservice
+Service-Component: OSGI-INF/component.xml 
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Bundle-Vendor: IPV

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="com.ipv.sensetrace.solarlogcsvservice.SolarlogCSVService">
+   <implementation class="com.ipv.sensetrace.solarlogcsvservice.SolarlogCSVService"/>
+   <service>
+      <provide interface="com.ipv.sensetrace.solarlogcsvservice.ISolarlogCSVService"/>
+   </service>
+</scr:component>
