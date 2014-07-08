@@ -167,6 +167,22 @@ public class TimeFormat {
 		}
 		return dtDate.getTime();
 	}
+	
+	public long ConvertSLTimeToTimestamp(String date,String str) {
+		// System.out.println("Convertdate: " + date);
+		// long timestamp_int = 0;
+		java.util.Date dtDate = new Date();
+		// DateFormat etalis = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
+		DateFormat sql = new SimpleDateFormat("dd.MM.yy"+str+"HH:mm:ss");
+		sql.setTimeZone(TimeZone.getTimeZone("UTC"));
+		try {
+			dtDate = sql.parse(date);
+		} catch (java.text.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dtDate.getTime();
+	}
 
 	public String ConvertSQLTimeToDLTime(String date) {
 		// long timestamp_int = 0;

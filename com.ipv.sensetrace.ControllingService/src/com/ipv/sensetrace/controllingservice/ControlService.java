@@ -196,11 +196,11 @@ public class ControlService implements IControlService {
 		check_if_avg_exists = flag;
 	}
 
-	public void CalcAvgsForAllSensors() {
+	public void CalcAvgsForAllSensors(boolean calc_min_data) {
 
 		System.out.println("Starting average calculation...");
-		pgsqlservice.CalculateAverages(null, null, timeintervall[0],
-				timeintervall[1], sensor_list);
+		pgsqlservice.CalculateAverages(calc_min_data, null, null,
+				timeintervall[0], timeintervall[1], sensor_list);
 		/*
 		 * pgsqlservice.CalculateAverages(rdfservice.GetErrorSensors(range,
 		 * active), timeintervall[0], timeintervall[1]);
@@ -208,7 +208,7 @@ public class ControlService implements IControlService {
 		System.out.println("Average calculation finished!");
 	}
 
-	public void CalcAvgsForErrorSensors() {
+	public void CalcAvgsForErrorSensors(boolean calc_min_data) {
 
 		System.out.println("Starting average calculation...");
 		/*
@@ -218,8 +218,9 @@ public class ControlService implements IControlService {
 		 * sensor_for_resolution_exists = true; } n++; } if
 		 * (sensor_for_resolution_exists) {
 		 */
-		pgsqlservice.CalculateAverages(rdfservice.SensorsToReplace(true), null,
-				timeintervall[0], timeintervall[1], sensor_list);
+		pgsqlservice.CalculateAverages(calc_min_data,
+				rdfservice.SensorsToReplace(true), null, timeintervall[0],
+				timeintervall[1], sensor_list);
 		// }
 		/*
 		 * pgsqlservice.CalculateAverages(rdfservice.GetErrorSensors(range,
@@ -228,13 +229,14 @@ public class ControlService implements IControlService {
 		System.out.println("Average calculation finished!");
 	}
 
-	public void CalcAvgsWithoutErrorSensors2() {
+	public void CalcAvgsWithoutErrorSensors2(boolean calc_min_data) {
 
 		System.out.println("Starting average calculation...");
 
 		// Range dynamisch - Änder!!!
-		pgsqlservice.CalculateAverages(null, rdfservice.SensorsToReplace(true),
-				timeintervall[0], timeintervall[1], sensor_list);
+		pgsqlservice.CalculateAverages(calc_min_data, null,
+				rdfservice.SensorsToReplace(true), timeintervall[0],
+				timeintervall[1], sensor_list);
 		/*
 		 * pgsqlservice.CalculateAverages(rdfservice.GetErrorSensors(range,
 		 * active), timeintervall[0], timeintervall[1]);
@@ -242,7 +244,7 @@ public class ControlService implements IControlService {
 		System.out.println("Average calculation finished!");
 	}
 
-	public void CalcAvgsForGivenSensors(boolean auto) {
+	public void CalcAvgsForGivenSensors(boolean calc_min_data, boolean auto) {
 		if (!timeintervall[0]
 				.matches("((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
 						+ "[0-9]{2}:[0-9]{2}:[0-9]{2}")
@@ -267,15 +269,16 @@ public class ControlService implements IControlService {
 						/ (3600000 * 24);
 				SensorsWithAvg = pgsqlservice.SensorsWithAvg(timeintervall[0],
 						timeintervall[1], days);
-				pgsqlservice.CalculateAverages(null, SensorsWithAvg,
-						timeintervall[0], timeintervall[1], sensor_list);
+				pgsqlservice.CalculateAverages(calc_min_data, null,
+						SensorsWithAvg, timeintervall[0], timeintervall[1],
+						sensor_list);
 			} else {
 				System.out.println("Starting average calculation...");
 				if (sensors.length == 0) {
-					pgsqlservice.CalculateAverages(null, null,
+					pgsqlservice.CalculateAverages(calc_min_data, null, null,
 							timeintervall[0], timeintervall[1], sensor_list);
 				} else {
-					pgsqlservice.CalculateAverages(
+					pgsqlservice.CalculateAverages(calc_min_data,
 							new ArrayList<String>(Arrays.asList(sensors)),
 							null, timeintervall[0], timeintervall[1],
 							sensor_list);
@@ -454,8 +457,7 @@ public class ControlService implements IControlService {
 	public void start(boolean test, boolean downloadfromcsv,
 			boolean downloadfromdatalogger_ftp,
 			boolean downloadfromdatalogger_folder,
-			boolean downloadfromsolarlogjs,
-			boolean generate_v_data_stream) {
+			boolean downloadfromsolarlogjs, boolean generate_v_data_stream) {
 
 		TimeFormat timeformat = new TimeFormat();
 		/* Some flags for controlling what the sofware should do */
@@ -944,7 +946,8 @@ public class ControlService implements IControlService {
 
 		} // Normaler importmodus vom Datenlogger über ein Verzeichnis
 		else if (downloadfromsolarlogjs) {
-			System.out.println("Import from folder containing solarlog js files.");
+			System.out
+					.println("Import from folder containing solarlog js files.");
 
 			/*
 			 * ImportSensorDataFromMySQL importer = new
@@ -954,8 +957,8 @@ public class ControlService implements IControlService {
 			// Jtalis sollte immer Initialisiert werden
 			// cepservice.Init();
 			// cepservice.SetRange("1sec");
-			ImportSolarlogJS importer = new ImportSolarlogJS(
-					cepservice, pgsqlservice, rdfservice, solarlogcvservice, conf);
+			ImportSolarlogJS importer = new ImportSolarlogJS(cepservice,
+					pgsqlservice, rdfservice, solarlogcvservice, conf);
 
 			while (!importer.IsAllBatched()) {
 				System.out.println("Import");
@@ -983,7 +986,7 @@ public class ControlService implements IControlService {
 			mailservice.RegisterStaticProblem(msg);
 			// mailservice.SendStatusMail();
 
-		}else if (downloadfromcsv) {
+		} else if (downloadfromcsv) {
 			System.out.println("Import from csv file.");
 			/*
 			 * ImportSensorDataFromMySQL importer = new
@@ -1044,7 +1047,8 @@ public class ControlService implements IControlService {
 		 */
 		init_for_pg_bundle();
 		pgsqlservice.CreateConnection(conf.getProperty("pgsqlcs"),
-				conf.getProperty("pgsqluser"), conf.getProperty("pgsqlpwd"), conf.getProperty("highest_resolution"));
+				conf.getProperty("pgsqluser"), conf.getProperty("pgsqlpwd"),
+				conf.getProperty("highest_resolution"));
 		// I know I should not use the service here but just for demonstration
 		// System.out.println(service.getQuote());
 	}
@@ -1112,6 +1116,7 @@ public class ControlService implements IControlService {
 			solarlogcvservice = null;
 		}
 	}
+
 	// Method will be used by DS to set the CEP service
 	public synchronized void RegCEPService(CEPDatastreamAnalyzerService service) {
 		System.out.println("Register CEPService");

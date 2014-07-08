@@ -79,7 +79,7 @@ public class TimeFormat {
 	}
 
 	public long ConvertSQLTimeToTimestamp(String date) {
-		// System.out.println("Convertdate: " + date);
+		// System.out.println("Convertdate3: " + date);
 		// long timestamp_int = 0;
 		java.util.Date dtDate = new Date();
 		// DateFormat etalis = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
@@ -96,35 +96,9 @@ public class TimeFormat {
 
 	}
 
-	public long ConvertMySQLTimeToTimestamp(String date) {
-		//if (date != null) {
-
-			// System.out.println("Convertdate: " + date);
-			// String tokens=tokens.
-			// long timestamp_int = 0;
-			// System.out.println("Convertdate: " + date);
-			// date=date.substring(0, date.length()-2);
-			// System.out.println("Convertdate: " + date);
-			java.util.Date dtDate = new Date();
-			// DateFormat etalis = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
-			DateFormat sql = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-			sql.setTimeZone(TimeZone.getTimeZone("UTC"));
-				try {
-				dtDate = sql.parse(date);
-			} catch (java.text.ParseException e) {
-				// TODO Auto-generated catch block
-				System.err.println("Convertdate: " + date);
-				e.printStackTrace();
-				// System.err.println("Convertdate: " + date);
-			}
-
-			return dtDate.getTime();
-		//}
-		//return -1;
-
-	}
 	
 	public long ConvertTimeInFilenameToTimestamp(String date) {
+		//System.out.println("Convertdate2: " + date);
 		//if (date != null) {
 
 			// System.out.println("Convertdate: " + date);
@@ -145,7 +119,7 @@ public class TimeFormat {
 				e.printStackTrace();
 				// System.err.println("Convertdate: " + date);
 			}
-
+				//System.out.println("Convertdate2: " + dtDate.getTime());
 			return dtDate.getTime();
 		//}
 		//return -1;
@@ -153,7 +127,7 @@ public class TimeFormat {
 	}
 
 	public long ConvertDLTimeToTimestamp(String date,String sign) {
-		// System.out.println("Convertdate: " + date);
+		// System.out.println("Convertdate1: " + date);
 		// long timestamp_int = 0;
 		java.util.Date dtDate = new Date();
 		// DateFormat etalis = new SimpleDateFormat("yyyy,MM,dd,HH,mm,ss");
@@ -165,24 +139,10 @@ public class TimeFormat {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Convertdate1: " + dtDate.getTime());
 		return dtDate.getTime();
 	}
 
-	public String ConvertSQLTimeToDLTime(String date) {
-		// long timestamp_int = 0;
-		java.util.Date dtDate = new Date();
-		DateFormat dl = new SimpleDateFormat("dd.MM.yyyy,HH:mm:ss");
-		DateFormat sql = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		dl.setTimeZone(TimeZone.getTimeZone("UTC"));
-		sql.setTimeZone(TimeZone.getTimeZone("UTC"));
-		try {
-			dtDate = sql.parse(date);
-		} catch (java.text.ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		return dl.format(dtDate);
-	}
 
 }

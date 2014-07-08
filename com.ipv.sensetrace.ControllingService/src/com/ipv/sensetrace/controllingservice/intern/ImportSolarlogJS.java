@@ -68,12 +68,12 @@ public class ImportSolarlogJS {
 			System.out.println("solarlogfilenamelink: " + solarlogfilenamelink);
 			System.out.println("Import Sensor with postgresid: " + postgresid
 					+" solarlogfilenamelink: " +solarlogfilenamelink);
-			try {
+		/*	try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 		
 			/*
 			 * Letzten Wert aus der Datenbank holen - Intervalanfang
@@ -86,9 +86,6 @@ public class ImportSolarlogJS {
 						String nextpgvalue = null;
 			System.out.println("Get Last Timestamp");
 			String lastpgtimestamp = pgsqlservice.GetLastTimestamp(postgresid);
-			System.out.println("Get Last Timestamp");
-			 System.out.println("LastTimestampinDB: " + lastpgtimestamp);
-			 System.out.println("Print Last Timestamp");
 			if (lastpgtimestamp != null) {
 				lastpgtimestamp_l = timeformat
 						.ConvertSQLTimeToTimestamp(lastpgtimestamp);
@@ -96,9 +93,12 @@ public class ImportSolarlogJS {
 				nextpgvalue = pgsqlservice.GetLastValue(postgresid);
 
 			}
-			System.out.println("lastpgtimestamp: " + lastpgtimestamp);
+			
+			//System.out.println("lastpgtimestamp: " + lastpgtimestamp);
 	
-			System.out.println("dlfilenamelink: " + solarlogfilenamelink);
+		//	System.out.println("solarlogfilenamelink: " + solarlogfilenamelink);
+
+			
 			if (dlservice.FetchData(  lastpgtimestamp,
 					folder, solarlogfilenamelink, csvarray_int)) {
 
@@ -110,8 +110,10 @@ public class ImportSolarlogJS {
 				System.out.println("lastdltimestamp: " + lastdltime
 						+ " lastpgtimestamp: " + lastpgtimestamp);
 				System.out.println("lastdltimestamp: "
-						+ timeformat.ConvertDLTimeToTimestamp(lastdltime," ")
+						+ timeformat.ConvertSLTimeToTimestamp(lastdltime," ")
 						+ " lastpgtimestamp: " + lastpgtimestamp_l);
+				//If pgvalue was null, then get first value and timestamp from csv file
+				//lastpgtimestamp
 				/*try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -121,12 +123,19 @@ public class ImportSolarlogJS {
 
 				while ((lastdltime = dlservice.GetElement("timestamp")) != null) {
 					String lastdbvalue = dlservice.GetElement("value");
+					/*System.out.println("value: " + lastdbvalue);
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}*/
 					if (lastdbvalue.equals("invalid")) {
 						lastdbvalue = null;
 					}
 
 					long lastdltimestamp = timeformat
-							.ConvertDLTimeToTimestamp(lastdltime," ");
+							.ConvertSLTimeToTimestamp(lastdltime," ");
 
 					/*
 					 * If Pg-Database still empty, get values from mysql
@@ -140,6 +149,15 @@ public class ImportSolarlogJS {
 					while (nextpgtimestamp < lastdltimestamp) {
 						//Just one conversation, faster
 						lastpgtimestamp = timeformat.ConvertMillisecondsToSQLTime(nextpgtimestamp);
+					/*	System.out.println("lastpgtimestamp: " + lastpgtimestamp);
+						System.out.println("postgresid: " + postgresid);
+						System.out.println("nextpgvalue: " + nextpgvalue);*/
+						/*try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}*/
 						pgsqlservice.AddValueToBatch(lastpgtimestamp,
 								postgresid, nextpgvalue);
 						//cepservice.SendData(ts, nextpgvalue);
@@ -158,7 +176,7 @@ public class ImportSolarlogJS {
 							//System.out.println("pgsqlservice.ExecuteBatch();");
 						}
 						lastpgtimestamp_l = nextpgtimestamp;
-						nextpgtimestamp = nextpgtimestamp + 1000;
+						nextpgtimestamp = nextpgtimestamp + 60000;
 					}
 					/*
 					 * Insert last value
@@ -203,9 +221,9 @@ public class ImportSolarlogJS {
 			//System.out.println("Next Sensor:");
 			postgresid = rdfservice.GetNextSensor("postgresid");
 			csvarray = rdfservice.GetNextSensor("csvarray");
-			solarlogfilenamelink = rdfservice.GetNextSensor("ftplink");
+		//	solarlogfilenamelink = rdfservice.GetNextSensor("ftplink");
 			//definition = rdfservice.GetNextSensor("definition");
-			solarlogfilenamelink= rdfservice.GetNextSensor("dlfilenamelink");
+			solarlogfilenamelink= rdfservice.GetNextSensor("solarlogfilenamelink");
 		}
 	}
 }

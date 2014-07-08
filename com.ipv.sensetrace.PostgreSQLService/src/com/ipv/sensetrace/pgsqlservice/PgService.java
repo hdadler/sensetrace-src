@@ -286,7 +286,7 @@ public class PgService implements IPgService {
 		if (GetElement("timestamp") == null) {
 			System.out
 					.println("Fatal error or first import? Sensor not found in table Registry_Last_Entries!");
-			//System.exit(0);
+			// System.exit(0);
 			return null;
 		}
 		return GetElement("timestamp");
@@ -538,9 +538,7 @@ public class PgService implements IPgService {
 			// resolution
 			else if (resolution.contains("1min")) {
 				sql = "INSERT INTO public.\"Data_1m_avg\" (timestamp, sensorid, value) values (?::timestamp, ?::smallint, ?::real)";
-			}
-			else
-			{
+			} else {
 				System.out.println("Error: Resolution must be 1min or 1sec.");
 				System.exit(0);
 			}
@@ -1125,7 +1123,8 @@ public class PgService implements IPgService {
 		return SensorsWithAvg;
 	}
 
-	public void CalculateAverages(ArrayList<String> sensoridstouse,
+	public void CalculateAverages(boolean calc_min_data,
+			ArrayList<String> sensoridstouse,
 			ArrayList<String> sensoridsnottouse, String timefrom,
 			String timeto, ArrayList<String> sensors) {
 
@@ -1214,29 +1213,34 @@ public class PgService implements IPgService {
 			if (execsql) {
 				try {
 
-					where_str = where_str_global + " data.timestamp<"
-							+ "ts_round('" + timeto + "',60) + interval '1min'"
-							+ " and data.timestamp>=" + "ts_round('" + timefrom
-							+ "',60)";
-					System.out
-							.println("DELETE FROM \"Data_1m_avg\" as data where"
-									+ where_str);
-					st.execute("DELETE FROM \"Data_1m_avg\" as data where"
-							+ where_str);
-					con.commit();
-					System.out.println("Deleted old 1m-avg-data");
-					System.out
-							.println("Insert into \"Data_1m_avg\""
-									+ " select ts_round(data.timestamp,60) as timeg, data.sensorid,  avg(data.value_cor) "
-									+ "from \"errorfilter\" as data where"
-									+ where_str
-									+ " group by timeg,sensorid order by timeg");
-					st.execute("Insert into \"Data_1m_avg\""
-							+ " select ts_round(data.timestamp,60) as timeg, data.sensorid,  avg(data.value_cor) "
-							+ "from \"errorfilter\" as data where" + where_str
-							+ " group by timeg,sensorid order by timeg");
-					con.commit();
-					System.out.println("Calculated 1m-avg-data");
+					if (calc_min_data) {
+						where_str = where_str_global + " data.timestamp<"
+								+ "ts_round('" + timeto
+								+ "',60) + interval '1min'"
+								+ " and data.timestamp>=" + "ts_round('"
+								+ timefrom + "',60)";
+						System.out
+
+						.println("DELETE FROM \"Data_1m_avg\" as data where"
+								+ where_str);
+						st.execute("DELETE FROM \"Data_1m_avg\" as data where"
+								+ where_str);
+						con.commit();
+						System.out.println("Deleted old 1m-avg-data");
+						System.out
+								.println("Insert into \"Data_1m_avg\""
+										+ " select ts_round(data.timestamp,60) as timeg, data.sensorid,  avg(data.value_cor) "
+										+ "from \"errorfilter\" as data where"
+										+ where_str
+										+ " group by timeg,sensorid order by timeg");
+						st.execute("Insert into \"Data_1m_avg\""
+								+ " select ts_round(data.timestamp,60) as timeg, data.sensorid,  avg(data.value_cor) "
+								+ "from \"errorfilter\" as data where"
+								+ where_str
+								+ " group by timeg,sensorid order by timeg");
+						con.commit();
+						System.out.println("Calculated 1m-avg-data");
+					}
 					/*
 					 * try { Thread.sleep(3); } catch (InterruptedException e) {
 					 * // TODO Auto-generated catch block e.printStackTrace(); }
@@ -1669,6 +1673,5 @@ public class PgService implements IPgService {
 		}
 
 	}
-
 
 }

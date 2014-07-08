@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.StringTokenizer;
 
 import com.ipv.sensetrace.solarlogcsvservice.internal.TimeFormat;
@@ -14,14 +16,36 @@ import com.ipv.sensetrace.solarlogcsvservice.internal.TimeFormat;
 public class SolarlogCSVService implements ISolarlogCSVService {
 
 	java.io.BufferedReader FileReader = null;
+
+	// For reversing the file
+	List<String> buffer_list = new ArrayList<String>();
+	int list_index = 0;
+
 	int csvarray[] = null;
 	String line = null;
- 
+
 	TimeFormat timeformat = new TimeFormat();
 	String file_str_lowest_date = "";
 
+	private void ReverseFileToBuffer() {
+
+		buffer_list.clear();
+		try {
+			while ((line = FileReader.readLine()) != null) {
+				buffer_list.add(line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		list_index = buffer_list.size() - 1;
+
+	}
+
 	public boolean FetchData(String datefrom, String folder_str,
 			String stringinfile, int[] csvarray_ref) {
+		System.out.println("Datefrom: " + datefrom);
+
 		csvarray = csvarray_ref;
 		// actualfolder = folder_str;
 		// System.out.println("Jump to dlid in file: " + dlid);
@@ -36,6 +60,21 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 			System.exit(0);
 
 		}
+		// Check for batched folder
+		File batched = new File(folder_str + "/batched");
+		if (!batched.exists()) {
+			// Create folder
+			System.out.println("Create folder batched in: " + folder_str);
+			boolean success = (new File(folder_str + "/batched")).mkdirs();
+			if (!success) {
+				System.out.println("Create folder batched in: " + folder_str
+						+ "failed");
+				System.out
+						.println("Try to create folder \"batched\" manually.");
+				System.exit(0);
+			}
+
+		}
 		// Print out all folder content...
 		/*
 		 * String[] FilesInFolder = Folder.list(); for (int i = 0; i <
@@ -44,6 +83,7 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 		String[] FilesInFolder = Folder.list();
 		// Add files to list that contain string in file
 
+		// System.out.println("stringinfile: "+stringinfile);
 		ArrayList<String> SearchedFiles = new ArrayList<String>();
 		for (int i = 0; i < FilesInFolder.length; i++) {
 			if (FilesInFolder[i].contains(stringinfile)) {
@@ -59,6 +99,8 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 		long date_ts_lowest = 0;
 
 		for (int i = 0; i < SearchedFiles.size(); i++) {
+			// System.out.println("SearchedFiles.get(i): " +
+			// SearchedFiles.get(i));
 			date_str = SearchedFiles.get(i).split("min")[1].split(".js")[0];
 			// System.out.println("date_str: " + date_str);
 			date_ts = Long.parseLong(date_str);
@@ -90,6 +132,9 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 			System.err.println("Go to next sensor. Cause file not found.");
 			return false;
 		}
+
+		// reverse File!
+		ReverseFileToBuffer();
 		/*
 		 * try { Thread.sleep(2000); } catch (InterruptedException e) { // TODO
 		 * Auto-generated catch block e.printStackTrace(); }
@@ -100,12 +145,9 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 		 * // System.out.println("dlid: " + dlid); // Jump to tagid in file! try
 		 * { while (line != null && !line.contains(";" + dlid + ";")) {
 		 */
-		try {
-			line = FileReader.readLine();
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+
+		//line = buffer_list.get(list_index--);
+
 		// }
 		// line = FileReader.readLine();
 		// n++;
@@ -115,9 +157,11 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 		 */
 		// Just go on, if line not null
 
-		// System.out.println("datefrom: "+datefrom);
-		if (line != null) {
+		// System.out.println("list_index: "+list_index);
+		if (list_index >= 0) {
 
+			//If file contains line, read in
+			line = buffer_list.get(list_index--);
 			// Jump to right date in file!
 			long sqltime_l = 0;
 			if (datefrom != null) {
@@ -133,37 +177,35 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 			 * date_str=date_str.split("\\|")[0];
 			 * System.out.println("date_str:"+date_str);
 			 */
-			System.out.println("line:" + line);
-			while (line != null
+			//System.out.println("list_index:" + list_index);
+			while (list_index >= 0
 
 					&& timeformat.ConvertDLTimeToTimestamp(
 							line.split("\"")[1].split("\\|")[0], " ") != 0
 					&& timeformat.ConvertDLTimeToTimestamp(
 							line.split("\"")[1].split("\\|")[0], " ") <= sqltime_l) {
-				System.out.println("time:"
+				/*System.out.println("time:"
 						+ timeformat.ConvertDLTimeToTimestamp(
 								line.split("\"")[1].split("\\|")[0], " "));
-				try {
-					line = FileReader.readLine();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+*/
+				// line = FileReader.readLine();
+				line = buffer_list.get(list_index--);
+
 				// n++;
 			}
 			// System.out.println("Line: " + line);
-			if (line == null) {
+			if (list_index < 0) {
 				System.err
 						.println("No newer Date found!...import next sensor.");
-				System.out.println("return false");
+			//	System.out.println("return false");
 				return false;
 			}
 		} else {
 			System.err.println("No SensorID found!...import next sensor.");
-			System.out.println("return false");
+		//	System.out.println("return false");
 			return false;
 		}
-		System.out.println("return true");
+		//System.out.println("return true");
 		return true;
 	}
 
@@ -193,21 +235,25 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 		file_str_lowest_date = "";
 		long date_ts_lowest = 0;
 
+		// Search for the oldest file in list
+		date_str = "";
+		date_ts = 0;
+		file_str_lowest_date = "";
+
 		for (int i = 0; i < SearchedFiles.size(); i++) {
-			System.out.println("SearchedFiles.get(i): " + SearchedFiles.get(i));
-			date_str = SearchedFiles.get(i).split("_")[4] + "_"
-					+ SearchedFiles.get(i).split("_")[5];
+			// System.out.println("SearchedFiles.get(i): " +
+			// SearchedFiles.get(i));
+			date_str = SearchedFiles.get(i).split("min")[1].split(".js")[0];
 			// System.out.println("date_str: " + date_str);
-			date_ts = timeformat.ConvertTimeInFilenameToTimestamp(date_str);
+			date_ts = Long.parseLong(date_str);
 			// System.out.println("date_ts: " + date_ts);
 			if (i == 0) {
-				file_str_lowest_date = date_str;
+				file_str_lowest_date = SearchedFiles.get(0);
 				date_ts_lowest = date_ts;
 			} else if (date_ts < date_ts_lowest) {
-				file_str_lowest_date = date_str;
+				file_str_lowest_date = SearchedFiles.get(i);
 				date_ts_lowest = date_ts;
 			}
-			// System.out.println("date_ts_lowest: " + date_ts_lowest);
 
 		}
 		// System.out.println("file_str_lowest_date: " + file_str_lowest_date);
@@ -265,26 +311,24 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 	 */
 
 	public String GetElement(String column) {
-		// System.out.println("line: " + line);
+		//System.out.println("line: " + line);
 
-		if (line != null) {
-			//System.out.println("csvarray[0] " + csvarray[0]);
-			//System.out.println("csvarray[1] " + csvarray[1]);
+		if (list_index >= 0) {
+			// System.out.println("csvarray[0] " + csvarray[0]);
+			// System.out.println("csvarray[1] " + csvarray[1]);
 
 			StringTokenizer st = new StringTokenizer(line.split("\"")[1], "\\|");
 
-			/*try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
+			/*
+			 * try { Thread.sleep(10000); } catch (InterruptedException e) { //
+			 * TODO Auto-generated catch block e.printStackTrace(); }
+			 */
 			// st.
 			// StringTokenizer st = new StringTokenizer(line, "\\|");
 			String date = st.nextToken();
 			// String value = st.nextToken();
 			if (column == "timestamp") {
-				//System.out.println("date: " + date);
+				// System.out.println("date: " + date);
 				return date;
 			} else if (column == "value") {
 
@@ -301,7 +345,7 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 					value = st2.nextToken();
 
 				}
-				//System.out.println("value: " + value);
+				// System.out.println("value: " + value);
 				return value;
 			}
 
@@ -311,18 +355,23 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 	}
 
 	public boolean GotoNextElement() {
-		try {
-			if ((line = FileReader.readLine()) != null) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-
-			e.printStackTrace();
+		/*
+		 * try { if ((line = FileReader..readLine()) != null) { return true; }
+		 * else { return false; } } catch (IOException e) { // TODO
+		 * Auto-generated catch block
+		 * 
+		 * e.printStackTrace(); return false; }
+		 */
+	//	System.out.println("list_index: " + list_index);
+		list_index--;
+		if (list_index < 0) {
 			return false;
+		} else {
+
+			line = buffer_list.get(list_index);
+			return true;
 		}
+
 	}
 
 }
