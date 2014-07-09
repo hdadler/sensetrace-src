@@ -1123,7 +1123,7 @@ public class PgService implements IPgService {
 		return SensorsWithAvg;
 	}
 
-	public void CalculateAverages(boolean calc_min_data,
+	public void CalculateAverages(String calc_min_data,
 			ArrayList<String> sensoridstouse,
 			ArrayList<String> sensoridsnottouse, String timefrom,
 			String timeto, ArrayList<String> sensors) {
@@ -1213,7 +1213,7 @@ public class PgService implements IPgService {
 			if (execsql) {
 				try {
 
-					if (calc_min_data) {
+					if (!calc_min_data.contains("1min")) {
 						where_str = where_str_global + " data.timestamp<"
 								+ "ts_round('" + timeto
 								+ "',60) + interval '1min'"

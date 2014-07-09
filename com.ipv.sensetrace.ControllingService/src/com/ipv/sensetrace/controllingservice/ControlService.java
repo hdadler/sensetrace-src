@@ -196,10 +196,10 @@ public class ControlService implements IControlService {
 		check_if_avg_exists = flag;
 	}
 
-	public void CalcAvgsForAllSensors(boolean calc_min_data) {
+	public void CalcAvgsForAllSensors() {
 
 		System.out.println("Starting average calculation...");
-		pgsqlservice.CalculateAverages(calc_min_data, null, null,
+		pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"), null, null,
 				timeintervall[0], timeintervall[1], sensor_list);
 		/*
 		 * pgsqlservice.CalculateAverages(rdfservice.GetErrorSensors(range,
@@ -208,7 +208,7 @@ public class ControlService implements IControlService {
 		System.out.println("Average calculation finished!");
 	}
 
-	public void CalcAvgsForErrorSensors(boolean calc_min_data) {
+	public void CalcAvgsForErrorSensors() {
 
 		System.out.println("Starting average calculation...");
 		/*
@@ -218,7 +218,7 @@ public class ControlService implements IControlService {
 		 * sensor_for_resolution_exists = true; } n++; } if
 		 * (sensor_for_resolution_exists) {
 		 */
-		pgsqlservice.CalculateAverages(calc_min_data,
+		pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"),
 				rdfservice.SensorsToReplace(true), null, timeintervall[0],
 				timeintervall[1], sensor_list);
 		// }
@@ -229,22 +229,8 @@ public class ControlService implements IControlService {
 		System.out.println("Average calculation finished!");
 	}
 
-	public void CalcAvgsWithoutErrorSensors2(boolean calc_min_data) {
-
-		System.out.println("Starting average calculation...");
-
-		// Range dynamisch - Änder!!!
-		pgsqlservice.CalculateAverages(calc_min_data, null,
-				rdfservice.SensorsToReplace(true), timeintervall[0],
-				timeintervall[1], sensor_list);
-		/*
-		 * pgsqlservice.CalculateAverages(rdfservice.GetErrorSensors(range,
-		 * active), timeintervall[0], timeintervall[1]);
-		 */
-		System.out.println("Average calculation finished!");
-	}
-
-	public void CalcAvgsForGivenSensors(boolean calc_min_data, boolean auto) {
+	
+	public void CalcAvgsForGivenSensors(boolean auto) {
 		if (!timeintervall[0]
 				.matches("((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
 						+ "[0-9]{2}:[0-9]{2}:[0-9]{2}")
@@ -269,16 +255,16 @@ public class ControlService implements IControlService {
 						/ (3600000 * 24);
 				SensorsWithAvg = pgsqlservice.SensorsWithAvg(timeintervall[0],
 						timeintervall[1], days);
-				pgsqlservice.CalculateAverages(calc_min_data, null,
+				pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"), null,
 						SensorsWithAvg, timeintervall[0], timeintervall[1],
 						sensor_list);
 			} else {
 				System.out.println("Starting average calculation...");
 				if (sensors.length == 0) {
-					pgsqlservice.CalculateAverages(calc_min_data, null, null,
+					pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"), null, null,
 							timeintervall[0], timeintervall[1], sensor_list);
 				} else {
-					pgsqlservice.CalculateAverages(calc_min_data,
+					pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"),
 							new ArrayList<String>(Arrays.asList(sensors)),
 							null, timeintervall[0], timeintervall[1],
 							sensor_list);
