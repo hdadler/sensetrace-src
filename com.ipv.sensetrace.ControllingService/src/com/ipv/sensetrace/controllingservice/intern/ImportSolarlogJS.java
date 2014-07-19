@@ -63,11 +63,11 @@ public class ImportSolarlogJS {
 		String folder=conf.getProperty("solarlogjsfiles");
 		String csvarray=rdfservice.GetNextSensor("csvarray");
 		while ((postgresid != null)) {
-			System.out.println("folder: " + folder);
+		/*	System.out.println("folder: " + folder);
 			System.out.println("csvarray: " + csvarray);
 			System.out.println("solarlogfilenamelink: " + solarlogfilenamelink);
 			System.out.println("Import Sensor with postgresid: " + postgresid
-					+" solarlogfilenamelink: " +solarlogfilenamelink);
+					+" solarlogfilenamelink: " +solarlogfilenamelink);*/
 		/*	try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
@@ -84,7 +84,7 @@ public class ImportSolarlogJS {
 			 csvarray_int[0]=Integer.parseInt(csvarray.split(",")[0]);
 			 csvarray_int[1]=Integer.parseInt(csvarray.split(",")[1]);
 						String nextpgvalue = null;
-			System.out.println("Get Last Timestamp");
+			//System.out.println("Get Last Timestamp");
 			String lastpgtimestamp = pgsqlservice.GetLastTimestamp(postgresid);
 			if (lastpgtimestamp != null) {
 				lastpgtimestamp_l = timeformat
@@ -107,11 +107,11 @@ public class ImportSolarlogJS {
 				 */
 				String lastdltime = dlservice.GetElement("timestamp");
 				int n = 0;
-				System.out.println("lastdltimestamp: " + lastdltime
+				/*System.out.println("lastdltimestamp: " + lastdltime
 						+ " lastpgtimestamp: " + lastpgtimestamp);
 				System.out.println("lastdltimestamp: "
 						+ timeformat.ConvertSLTimeToTimestamp(lastdltime," ")
-						+ " lastpgtimestamp: " + lastpgtimestamp_l);
+						+ " lastpgtimestamp: " + lastpgtimestamp_l);*/
 				//If pgvalue was null, then get first value and timestamp from csv file
 				//lastpgtimestamp
 				/*try {
@@ -212,7 +212,7 @@ public class ImportSolarlogJS {
 				pgsqlservice.ExecuteBatch();
 				pgsqlservice.SaveLastMeasurementValue();
 				pgsqlservice.Commit_Con();
-				System.out.println("Next Sensor");
+				//System.out.println("Next Sensor");
 				
 				
 				// postgresid = rdfservice.GetNextSensor("postgresid");

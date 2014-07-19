@@ -75,7 +75,7 @@ public class Batch implements Runnable {
 				Logger.getLogger(Batch.class.getName()).log(Level.SEVERE, null,
 						ex);
 			}
-			System.out.println("Set taskover:false");
+			//System.out.println("Set taskover:false");
 			taskover = false;
 			while (!messageQueue.isEmpty()) {
 

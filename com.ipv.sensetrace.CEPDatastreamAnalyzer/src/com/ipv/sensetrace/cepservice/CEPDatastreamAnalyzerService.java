@@ -52,7 +52,7 @@ public class CEPDatastreamAnalyzerService implements
 		staticchecks.InititialTimestamp();
 		staticchecks.SetBoarders(l_boarder, r_boarder);
 
-		System.out.println("onepercentdiff: " + onepercentdiff);
+		//System.out.println("onepercentdiff: " + onepercentdiff);
 		checkboarders = checkboarders_ref;
 		usejtalis = usejtalis_ref;
 	}
@@ -178,7 +178,7 @@ public class CEPDatastreamAnalyzerService implements
 				timeto=timeformat.ConvertMillisecondsToSQLTime(timeformat.ConvertSQLTimeToTimestamp(timeto)+59000);
 			}
 			
-			System.out.println("Pushing last element of interval: ts: " + timeto + "value: " + oldvalue);
+			//System.out.println("Pushing last element of interval: ts: " + timeto + "value: " + oldvalue);
 			jtalis.PushEvent(range, sensorid, timeto, oldvalue);
 		}
 	}

@@ -241,10 +241,10 @@ public class ImportSensorDataFromPg {
 		 * Import one month after the other till reaching current point in time
 		 */
 		while (lastdatetoinms < tilldatetoimp_l) {
-			System.out.println("lastdatetoinms: "
+			/*System.out.println("lastdatetoinms: "
 					+ timeformat.ConvertMillisecondsToSQLTime(lastdatetoinms));
 			System.out.println("tilldatetoimp_l: "
-					+ timeformat.ConvertMillisecondsToSQLTime(tilldatetoimp_l));
+					+ timeformat.ConvertMillisecondsToSQLTime(tilldatetoimp_l));*/
 			// mysqlservice.ReadData(datefrom, dateto, mysql_sensorid);
 			/*
 			 * Create Intervall of one month
@@ -422,7 +422,7 @@ public class ImportSensorDataFromPg {
 							boardercheck = true;
 						}
 
-						System.out.println("Import: postgresid: " + postgresid);
+						//System.out.println("Import: postgresid: " + postgresid);
 						/*System.out.println("datefrom: " + datefrom);
 						System.out.println("dateto: " + dateto);
 						System.out.println("ll: " + lowerlimit);
@@ -482,7 +482,7 @@ public class ImportSensorDataFromPg {
 						
 							if (range.contains("1day"))
 							{
-								 System.out.println("1day data: pgtime" + pgtime);
+								// System.out.println("1day data: pgtime" + pgtime);
 								try {
 									Thread.sleep(2000);
 								} catch (InterruptedException e) {

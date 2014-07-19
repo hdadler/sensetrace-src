@@ -153,10 +153,10 @@ public class PgService implements IPgService {
 					+ datefrom + "' and timestamp <'" + dateto
 					+ "' order by timestamp");
 		} else if (range.equals("1min")) {
-			System.out.println("SELECT value, timestamp  FROM \"Data_1m_avg\""
+			/*System.out.println("SELECT value, timestamp  FROM \"Data_1m_avg\""
 					+ " where sensorid='" + sensorid + "' and timestamp >='"
 					+ datefrom + "' and timestamp <'" + dateto
-					+ "' order by timestamp");
+					+ "' order by timestamp");*/
 			rs = st.executeQuery("SELECT value, timestamp  FROM \"Data_1m_avg\""
 					+ " where sensorid='"
 					+ sensorid
@@ -184,10 +184,10 @@ public class PgService implements IPgService {
 					+ dateto
 					+ "' order by timestamp");
 		} else if (range.equals("1day")) {
-			System.out.println("SELECT value, timestamp  FROM \"Data_1d_avg\""
+			/*System.out.println("SELECT value, timestamp  FROM \"Data_1d_avg\""
 					+ " where sensorid='" + sensorid + "' and timestamp >='"
 					+ datefrom + "' and timestamp <'" + dateto
-					+ "' order by timestamp");
+					+ "' order by timestamp");*/
 			rs = st.executeQuery("SELECT value, timestamp  FROM \"Data_1d_avg\""
 					+ " where sensorid='"
 					+ sensorid
@@ -232,9 +232,9 @@ public class PgService implements IPgService {
 			 * "'where timestamp>2013-07-20 00:00:00' and timestamp<2013-08-01 00:00:00' order by timestamp desc LIMIT 1"
 			 * );
 			 */
-			System.out
+			/*System.out
 					.println("SELECT distinct value,timestamp FROM \"public\".\"Registry_LastEntries\" where sensorid='"
-							+ postgresid + "'");
+							+ postgresid + "'");*/
 			rs = st.executeQuery("SELECT distinct value,timestamp FROM \"public\".\"Registry_LastEntries\" where sensorid='"
 					+ postgresid + "'");
 
@@ -258,17 +258,17 @@ public class PgService implements IPgService {
 
 		try {
 			// rs.close();
-			System.out
+			/*System.out
 					.println("SELECT distinct timestamp FROM \"public\".\"Registry_LastEntries\" where sensorid='"
 							// + postgresid +
 							// "' and timestamp>'2013-07-27 00:00:00' and timestamp<'2013-08-05 00:00:00' order by timestamp desc LIMIT 1");
 							+ postgresid + "'");
-			System.out.println("GetLastTimestamp");
+			System.out.println("GetLastTimestamp");*/
 			rs = st.executeQuery("SELECT distinct timestamp FROM \"public\".\"Registry_LastEntries\" where sensorid='"
 					// + postgresid +
 					// "' and timestamp>'2013-07-27 00:00:00' and timestamp<'2013-08-05 00:00:00' order by timestamp desc LIMIT 1");
 					+ postgresid + "'");
-			System.out.println("GetLastTimestamp");
+			//System.out.println("GetLastTimestamp");
 			/*
 			 * rs = st.executeQuery(
 			 * "SELECT distinct timestamp FROM \"public\".\"Rawdata\" where sensorid='"
@@ -838,6 +838,11 @@ public class PgService implements IPgService {
 	}
 
 	public void AddClRuleToBatch(long from, long to, String clid) {
+		from=from*1000;
+		to=to*1000;
+		/*System.out.println("from"+ from);
+		System.out.println("imeformat.ConvertMillisecondsToSQLTime(from)"+ timeformat.ConvertMillisecondsToSQLTime(from));
+		*/
 		try {
 			st_jtalis
 					.addBatch("delete from public.\"Classification\" where timestamp>= '"

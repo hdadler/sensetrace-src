@@ -44,12 +44,12 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 
 	public boolean FetchData(String datefrom, String folder_str,
 			String stringinfile, int[] csvarray_ref) {
-		System.out.println("Datefrom: " + datefrom);
+		//System.out.println("Datefrom: " + datefrom);
 
 		csvarray = csvarray_ref;
 		// actualfolder = folder_str;
 		// System.out.println("Jump to dlid in file: " + dlid);
-		System.out.println("Jump to date in file: " + datefrom);
+		//System.out.println("Jump to date in file: " + datefrom);
 
 		// find out the correct filename. therefore find the oldest file in
 		// given folder that contains stringinfile

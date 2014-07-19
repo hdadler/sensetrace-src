@@ -139,7 +139,7 @@ public class TimeFormat {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Convertdate1: " + dtDate.getTime());
+	//	System.out.println("Convertdate1: " + dtDate.getTime());
 		return dtDate.getTime();
 	}
 

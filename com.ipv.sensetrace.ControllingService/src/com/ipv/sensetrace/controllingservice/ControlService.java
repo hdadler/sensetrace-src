@@ -199,8 +199,8 @@ public class ControlService implements IControlService {
 	public void CalcAvgsForAllSensors() {
 
 		System.out.println("Starting average calculation...");
-		pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"), null, null,
-				timeintervall[0], timeintervall[1], sensor_list);
+		pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"),
+				null, null, timeintervall[0], timeintervall[1], sensor_list);
 		/*
 		 * pgsqlservice.CalculateAverages(rdfservice.GetErrorSensors(range,
 		 * active), timeintervall[0], timeintervall[1]);
@@ -229,7 +229,6 @@ public class ControlService implements IControlService {
 		System.out.println("Average calculation finished!");
 	}
 
-	
 	public void CalcAvgsForGivenSensors(boolean auto) {
 		if (!timeintervall[0]
 				.matches("((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
@@ -255,16 +254,19 @@ public class ControlService implements IControlService {
 						/ (3600000 * 24);
 				SensorsWithAvg = pgsqlservice.SensorsWithAvg(timeintervall[0],
 						timeintervall[1], days);
-				pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"), null,
+				pgsqlservice.CalculateAverages(
+						conf.getProperty("highest_resolution"), null,
 						SensorsWithAvg, timeintervall[0], timeintervall[1],
 						sensor_list);
 			} else {
 				System.out.println("Starting average calculation...");
 				if (sensors.length == 0) {
-					pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"), null, null,
+					pgsqlservice.CalculateAverages(
+							conf.getProperty("highest_resolution"), null, null,
 							timeintervall[0], timeintervall[1], sensor_list);
 				} else {
-					pgsqlservice.CalculateAverages(conf.getProperty("highest_resolution"),
+					pgsqlservice.CalculateAverages(
+							conf.getProperty("highest_resolution"),
 							new ArrayList<String>(Arrays.asList(sensors)),
 							null, timeintervall[0], timeintervall[1],
 							sensor_list);
@@ -520,6 +522,13 @@ public class ControlService implements IControlService {
 				Arrays.asList(timeintervall));
 		ArrayList<String> data_resolution_list = new ArrayList<String>(
 				Arrays.asList(data_resolution));
+
+		// highest_resolution is 1min. So exit function.
+		if (conf.getProperty("highest_resolution").contains("1min")
+				&& data_resolution_list.contains("1sec")) {
+			System.out.println("Highest_resolution is 1min. Leave out this step.");
+			return;
+		}
 
 		// Check for range_window and time_resolution
 		if (range_window.equals("1year")
