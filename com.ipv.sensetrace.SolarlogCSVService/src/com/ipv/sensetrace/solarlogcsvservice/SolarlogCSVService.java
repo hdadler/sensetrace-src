@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.StringTokenizer;
 
 import com.ipv.sensetrace.solarlogcsvservice.internal.TimeFormat;
@@ -42,6 +41,7 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 
 	}
 
+	@Override
 	public boolean FetchData(String datefrom, String folder_str,
 			String stringinfile, int[] csvarray_ref) {
 		//System.out.println("Datefrom: " + datefrom);
@@ -310,6 +310,7 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 	 * "/batched/" + file_str_lowest_date); quellDatei.renameTo(zielDatei); }
 	 */
 
+	@Override
 	public String GetElement(String column) {
 		//System.out.println("line: " + line);
 
@@ -354,6 +355,7 @@ public class SolarlogCSVService implements ISolarlogCSVService {
 
 	}
 
+	@Override
 	public boolean GotoNextElement() {
 		/*
 		 * try { if ((line = FileReader..readLine()) != null) { return true; }
