@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.vogella.tycho.build</groupId>
+  <artifactId>sensetrace-src</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>../../../../opt/eclipse/plugins/org.apache.ant_1.8.4.v201303080030</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.200.v20130514-1256</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.epp.package.dsl_2.0.2.20140224-0000</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.equinox.launcher.gtk.linux.x86_64_1.1.200.v20140116-2212</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.jdt.debug_3.8.0.v20130514-0841</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.pde.build_3.8.100.v20130514-1028</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.platform_4.3.2.v20140221-1700</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.recommenders.doc_1.0.5.v20130822-0858-b90</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.sdk_4.3.2.v20140221-1700</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.ui.intro.universal_3.2.600.v20130326-1254</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.xtend.standalone.source_2.4.3.v201309030823</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.xtend.standalone_2.4.3.v201309030823</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.xtext.doc_2.4.3.v201309030823</module>
+    <module>../../../../opt/eclipse/plugins/org.eclipse.xtext.xtext.ui.examples_2.4.3.v201309030823</module>
+    <module>../../../../opt/eclipse/plugins/org.junit_3.8.2.v3_8_2_v20100427-1100</module>
+    <module>../../../../opt/eclipse/plugins/org.junit_4.11.0.v201303080030</module>
+    <module>com.ipv.sensetrace.CEPDatastreamAnalyzer</module>
+    <module>com.ipv.sensetrace.CEPHandler</module>
+    <module>com.ipv.sensetrace.CommandService</module>
+    <module>com.ipv.sensetrace.ControllingService</module>
+    <module>com.ipv.sensetrace.DelphinCSVService</module>
+    <module>com.ipv.sensetrace.DelphinFTPService</module>
+    <module>com.ipv.sensetrace.MailService</module>
+    <module>com.ipv.sensetrace.PostgreSQLService</module>
+    <module>com.ipv.sensetrace.RDFDatamanager</module>
+    <module>com.ipv.sensetrace.SolarlogCSVService</module>
+  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>0.21.0</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
