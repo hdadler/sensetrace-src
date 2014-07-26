@@ -3,11 +3,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.vogella.tycho.build</groupId>
+    <groupId>com.ipv.sensetrace</groupId>
     <artifactId>sensetrace-src</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.vogella.tycho.build</groupId>
+  <groupId>com.ipv.sensetrace</groupId>
   <artifactId>com.ipv.sensetrace.CEPDatastreamAnalyzerService</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>

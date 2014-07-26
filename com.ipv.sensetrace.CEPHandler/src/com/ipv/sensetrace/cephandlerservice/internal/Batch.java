@@ -248,8 +248,8 @@ public class Batch implements Runnable {
 
 				if ((startvalue_o != null) && (endvalue_o != null)) {
 
-					float startvalue = (float) startvalue_o;
-					float endvalue = (float) endvalue_o;
+					float startvalue = (Float) startvalue_o;
+					float endvalue = (Float) endvalue_o;
 					// Calculate step
 					long interval_length = timeto - timefrom;
 					float value_diff = endvalue - startvalue;
