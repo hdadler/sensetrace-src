@@ -125,8 +125,8 @@ public class CEPHandlerService implements ICEPHandlerService {
 	Handler handler = null;
 	Batch batch = null;
 
-	public boolean IsTaskOverAndQueueEmpty() {
-		return batch.IsTaskOverAndQueueEmpty();
+	public boolean IsQueueEmpty() {
+		return batch.IsQueueEmpty();
 	}
 
 	public void StartMsgHandler(RDFDmService rdfservice_ref,

@@ -31,8 +31,8 @@ public class CEPDatastreamAnalyzerService implements
 	float onepercentdiff = 0;
 	boolean norangecheck = false;
 
-	public boolean IsTaskOverAndQueueEmpty() {
-		return cephservice.IsTaskOverAndQueueEmpty();
+	public boolean IsQueueEmpty() {
+		return cephservice.IsQueueEmpty();
 	}
 
 	public void NewSensor(String sensorid_ref, float l_boarder,

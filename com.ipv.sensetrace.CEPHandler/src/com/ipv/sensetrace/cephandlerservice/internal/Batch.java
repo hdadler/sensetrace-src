@@ -34,9 +34,9 @@ public class Batch implements Runnable {
 		rdfservice = rdfserviceref;
 	}
 
-	public boolean IsTaskOverAndQueueEmpty() {
+	public boolean IsQueueEmpty() {
 		synchronized (messageQueue) {
-			return (taskover && messageQueue.isEmpty());
+			return (taskover /* && messageQueue.isEmpty() */);
 		}
 
 	}
@@ -62,140 +62,148 @@ public class Batch implements Runnable {
 
 		// Terminates, if Server shutd down
 		// br.readLine() blocks till new line received
+		synchronized (messageQueue) {
+			while (true) {
 
-		while (true) {
-
-			try {
-				synchronized (messageQueue) {
+				try {
+					// synchronized (messageQueue) {
 
 					messageQueue.wait();
 
+					// }
+				} catch (InterruptedException ex) {
+					Logger.getLogger(Batch.class.getName()).log(Level.SEVERE,
+							null, ex);
 				}
-			} catch (InterruptedException ex) {
-				Logger.getLogger(Batch.class.getName()).log(Level.SEVERE, null,
-						ex);
-			}
-			//System.out.println("Set taskover:false");
-			taskover = false;
-			while (!messageQueue.isEmpty()) {
+				// System.out.println("Set taskover:false");
+				taskover = false;
+				while (!messageQueue.isEmpty()) {
 
-				line = messageQueue.poll();
+					line = messageQueue.poll();
 
-				// /if (line!=null)
+					// /if (line!=null)
 
-				// New message received
-				// Write Info to DB!
-				// Write To DB
-				// eventHandler.HandleEvent(line);
-				n = 0;
-				found = false;
-				System.out.println("Received Event from Queue: " + line);
-				String[] nametokens = line.split("\\(|\\)");
-				String[] valuetokens = null;
-				// System.out.println("CEPRuleClEvents.size(): " +
-				// CEPRuleClEvents.size());
-				while (n < CEPRuleClEvents.size()) {
-					/*
-					 * System.out.println("n: "+n);
-					 * System.out.println("CEPRuleClEvents.get(n): "
-					 * +CEPRuleClEvents.get(n));
-					 * System.out.println("nametokens[0]): " +nametokens[0]);
-					 */
-
-					if (CEPRuleClEvents.get(n).split(":")[0]
-							.equals(nametokens[0])) {
-						valuetokens = nametokens[1].split(", ");
-						// Received an timeintervall
-						/*
-						 * if (nametokens[1].contains(",")) {
-						 * System.out.println("Received Error-Rule: " +
-						 * nametokens[0] + " for intervall: " + nametokens[1]);
-						 * // Received an timestamp } else {
-						 */
-
-						// Split error rule to get sensorid
-						String[] ruletoken = CEPRuleClEvents.get(n).split(":");
-						System.out.println("Received Classification-Rule: "
-								+ nametokens[0] + " for intervall,value: "
-								+ nametokens[1] + " from: " + valuetokens[0]
-								+ " to: " + valuetokens[1] + " Sensorid: "
-								+ ruletoken[1]);
-						WriteRuleToDb(valuetokens[0], valuetokens[1],
-								ruletoken[1]);
-
-						// }
-						found = true;
-						/*
-						 * // Received an timeintervall if
-						 * (nametokens[1].contains(",")) { System.out.println
-						 * ("Received Classification-Rule: " + nametokens[0] +
-						 * " for intervall: " + nametokens[1]); // Received an
-						 * timestamp valuetokens = nametokens[1].split(", ");
-						 * WriteRuleToDb(valuetokens[0], valuetokens[1],
-						 * nametokens[0]); } else { System.out.println(
-						 * "Received Classification-Rule: " + nametokens[0] +
-						 * " for timestamp: " + nametokens[1]);
-						 * WriteRuleToDb(nametokens[0], nametokens[1],
-						 * nametokens[1]); } found = true;
-						 */
-					}
-					n++;
-				}
-				if (found == false) {
+					// New message received
+					// Write Info to DB!
+					// Write To DB
+					// eventHandler.HandleEvent(line);
 					n = 0;
-					while (n < CEPRuleErrorEvents.size()) {
-						if (CEPRuleErrorEvents.get(n).split(":")[0]
+					found = false;
+					System.out.println("Received Event from Queue: " + line);
+					String[] nametokens = line.split("\\(|\\)");
+					String[] valuetokens = null;
+					// System.out.println("CEPRuleClEvents.size(): " +
+					// CEPRuleClEvents.size());
+					while (n < CEPRuleClEvents.size()) {
+						/*
+						 * System.out.println("n: "+n);
+						 * System.out.println("CEPRuleClEvents.get(n): "
+						 * +CEPRuleClEvents.get(n));
+						 * System.out.println("nametokens[0]): "
+						 * +nametokens[0]);
+						 */
+
+						if (CEPRuleClEvents.get(n).split(":")[0]
 								.equals(nametokens[0])) {
 							valuetokens = nametokens[1].split(", ");
 							// Received an timeintervall
 							/*
-							 * if (nametokens[1].contains(",")) { System.
-							 * out.println("Received Error-Rule: " +
+							 * if (nametokens[1].contains(",")) {
+							 * System.out.println("Received Error-Rule: " +
 							 * nametokens[0] + " for intervall: " +
 							 * nametokens[1]); // Received an timestamp } else {
 							 */
 
 							// Split error rule to get sensorid
-							String[] ruletoken = CEPRuleErrorEvents.get(n)
-									.split(":");
-							System.out.println("Received Error-Rule: "
-									+ nametokens[0] + " for intervall: "
+							String[] ruletoken = CEPRuleClEvents.get(n).split(
+									":");
+							System.out.println("Received Classification-Rule: "
+									+ nametokens[0] + " for intervall,value: "
 									+ nametokens[1] + " from: "
 									+ valuetokens[0] + " to: " + valuetokens[1]
-									+ " value: " + valuetokens[2]
 									+ " Sensorid: " + ruletoken[1]);
-							//System.out.println("Write correction to db.");
+							WriteRuleToDb(valuetokens[0], valuetokens[1],
+									ruletoken[1]);
 
-							/*
-							 * try { Thread.sleep(1000); } catch
-							 * (InterruptedException e) { // TODO Auto-generated
-							 * catch block // e.print }
-							 */
-							WriteCorrectionToDb(nametokens[0], valuetokens[0],
-									valuetokens[1], ruletoken[1],
-									valuetokens[2]);
-						//	System.out.println("Written correction to db.");
+							// }
 							found = true;
+							/*
+							 * // Received an timeintervall if
+							 * (nametokens[1].contains(",")) {
+							 * System.out.println
+							 * ("Received Classification-Rule: " + nametokens[0]
+							 * + " for intervall: " + nametokens[1]); //
+							 * Received an timestamp valuetokens =
+							 * nametokens[1].split(", ");
+							 * WriteRuleToDb(valuetokens[0], valuetokens[1],
+							 * nametokens[0]); } else { System.out.println(
+							 * "Received Classification-Rule: " + nametokens[0]
+							 * + " for timestamp: " + nametokens[1]);
+							 * WriteRuleToDb(nametokens[0], nametokens[1],
+							 * nametokens[1]); } found = true;
+							 */
 						}
 						n++;
 					}
-
 					if (found == false) {
-						System.out.println("Received unknown Event: " + line);
+						n = 0;
+						while (n < CEPRuleErrorEvents.size()) {
+							if (CEPRuleErrorEvents.get(n).split(":")[0]
+									.equals(nametokens[0])) {
+								valuetokens = nametokens[1].split(", ");
+								// Received an timeintervall
+								/*
+								 * if (nametokens[1].contains(",")) { System.
+								 * out.println("Received Error-Rule: " +
+								 * nametokens[0] + " for intervall: " +
+								 * nametokens[1]); // Received an timestamp }
+								 * else {
+								 */
+
+								// Split error rule to get sensorid
+								String[] ruletoken = CEPRuleErrorEvents.get(n)
+										.split(":");
+								System.out.println("Received Error-Rule: "
+										+ nametokens[0] + " for intervall: "
+										+ nametokens[1] + " from: "
+										+ valuetokens[0] + " to: "
+										+ valuetokens[1] + " value: "
+										+ valuetokens[2] + " Sensorid: "
+										+ ruletoken[1]);
+								// System.out.println("Write correction to db.");
+
+								/*
+								 * try { Thread.sleep(1000); } catch
+								 * (InterruptedException e) { // TODO
+								 * Auto-generated catch block // e.print }
+								 */
+								WriteCorrectionToDb(nametokens[0],
+										valuetokens[0], valuetokens[1],
+										ruletoken[1], valuetokens[2]);
+								// System.out.println("Written correction to db.");
+								found = true;
+							}
+							n++;
+						}
+
+						if (found == false) {
+							System.out.println("Received unknown Event: "
+									+ line);
+						}
+
 					}
 
 				}
+				// System.out.println("Set taskoverandqueueistempty:true");
+				taskover = true;
+				/*try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
 
 			}
-			//System.out.println("Set taskoverandqueueistempty:true");
-			taskover = true;
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
 		}
 
 		// eventHandler.CloseEventHandler();
@@ -265,37 +273,44 @@ public class Batch implements Runnable {
 					// "ts:"
 					// + time.ConvertMillisecondsToSQLTime(timefrom * 1000));
 					// register error in mailservice
-					/*pgsqlservice.DeleteFromErrorJtalis(timefrom, timeto,
-							sensorid);*/
+					/*
+					 * pgsqlservice.DeleteFromErrorJtalis(timefrom, timeto,
+					 * sensorid);
+					 */
 					while (timefrom <= timeto) {
 
 						currentvalue = currentvalue + step;
 						pgsqlservice.AddCorrectedSensorToJtalisBatch(
-								timefrom * 1000,
-								timefrom * 1000,sensorid, Float.toString(currentvalue));
-					/*	pgsqlservice.AddCorrectedSensorToJtalisBatch(time
-								.ConvertMillisecondsToSQLTime(timefrom * 1000),
-								sensorid, String.valueOf(currentvalue));*/
+								timefrom * 1000, timefrom * 1000, sensorid,
+								Float.toString(currentvalue));
+						/*
+						 * pgsqlservice.AddCorrectedSensorToJtalisBatch(time
+						 * .ConvertMillisecondsToSQLTime(timefrom * 1000),
+						 * sensorid, String.valueOf(currentvalue));
+						 */
 						timefrom = timefrom + 1;
 
 					}
-					/*pgsqlservice.AddCorrectedSensorToJtalisBatch(
-							timefrom * 1000,
-							timeto * 1000,sensorid, value);*/
+					/*
+					 * pgsqlservice.AddCorrectedSensorToJtalisBatch( timefrom *
+					 * 1000, timeto * 1000,sensorid, value);
+					 */
 				} else {
-				/*	pgsqlservice.DeleteFromErrorJtalis(timefrom, timeto,
-							sensorid);*/
-					/*while (timefrom <= timeto) {
-
-						pgsqlservice.AddCorrectedSensorToJtalisBatch(time
-								.ConvertMillisecondsToSQLTime(timefrom * 1000),
-								sensorid, null);
-						timefrom = timefrom + 1;
-
-					}*/
+					/*
+					 * pgsqlservice.DeleteFromErrorJtalis(timefrom, timeto,
+					 * sensorid);
+					 */
+					/*
+					 * while (timefrom <= timeto) {
+					 * 
+					 * pgsqlservice.AddCorrectedSensorToJtalisBatch(time
+					 * .ConvertMillisecondsToSQLTime(timefrom * 1000), sensorid,
+					 * null); timefrom = timefrom + 1;
+					 * 
+					 * }
+					 */
 					pgsqlservice.AddCorrectedSensorToJtalisBatch(
-							timefrom * 1000,
-							timeto * 1000,sensorid, null);
+							timefrom * 1000, timeto * 1000, sensorid, null);
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -306,29 +321,24 @@ public class Batch implements Runnable {
 			System.out.println("Correction of sensor with id " + sensorid
 					+ " from time " + timefrom_s + " to " + timeto_s);
 			System.out.println("Writing value " + value);
-			//int n = 0;
-			pgsqlservice.AddCorrectedSensorToJtalisBatch(
-					timefrom * 1000,
-					timeto * 1000,sensorid, value);
-			//pgsqlservice.DeleteFromErrorJtalis(timefrom, timeto, sensorid);
-			/*while (timefrom <= timeto) {
-
-				pgsqlservice.AddCorrectedSensorToJtalisBatch(
-						time.ConvertMillisecondsToSQLTime(timefrom * 1000),
-						sensorid, value);
-				timefrom = timefrom + 1;
-				if (n > 1000) {
-					pgsqlservice.ExecuteJtalisBatch();
-					n = 0;
-				}
-				n++;
-			}*/
+			// int n = 0;
+			pgsqlservice.AddCorrectedSensorToJtalisBatch(timefrom * 1000,
+					timeto * 1000, sensorid, value);
+			// pgsqlservice.DeleteFromErrorJtalis(timefrom, timeto, sensorid);
+			/*
+			 * while (timefrom <= timeto) {
+			 * 
+			 * pgsqlservice.AddCorrectedSensorToJtalisBatch(
+			 * time.ConvertMillisecondsToSQLTime(timefrom * 1000), sensorid,
+			 * value); timefrom = timefrom + 1; if (n > 1000) {
+			 * pgsqlservice.ExecuteJtalisBatch(); n = 0; } n++; }
+			 */
 
 			// System.out.println("before  pgsqlservice.ExecuteJtalisBatch()");
-		
+
 			// System.out.println("after  pgsqlservice.ExecuteJtalisBatch()");
 		}
-		//pgsqlservice.ExecuteJtalisBatch();
+		// pgsqlservice.ExecuteJtalisBatch();
 	}
 
 	public void WriteRuleToDb(String timefrom_s, String timeto_s, String clid) {

@@ -849,7 +849,18 @@ public class ControlService implements IControlService {
 				 * try { Thread.sleep(10000); } catch (InterruptedException e) {
 				 * // TODO Auto-generated catch block e.printStackTrace(); }
 				 */
-				while (!cepservice.IsTaskOverAndQueueEmpty()) {
+				int n=0;
+				while (n<10) {
+					//If qu is not empty reset n; else count n+1;
+					//Finish if queue is empty for 10 measurements.
+					if (!cepservice.IsQueueEmpty())
+					{
+					n=0;
+					}
+					else
+					{
+						n++;
+					}
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
