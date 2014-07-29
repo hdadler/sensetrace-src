@@ -13,7 +13,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class CommandService implements BundleActivator, ServiceListener {
 
 	//private DictionaryService service;
-	private ServiceTracker dictionaryServiceTracker;
+	//private ServiceTracker dictionaryServiceTracker;
 
 
 	
@@ -46,8 +46,8 @@ public class CommandService implements BundleActivator, ServiceListener {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		// close the service tracker
-		dictionaryServiceTracker.close();
-		dictionaryServiceTracker = null;
+	//	dictionaryServiceTracker.close();
+	//	dictionaryServiceTracker = null;
 
 		///service = null;
 		//fContext = null;

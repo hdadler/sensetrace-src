@@ -1,3 +1,4 @@
 /plugins
 /.cache
 /.meta
+/configuration/org.eclipse.osgi
