@@ -14,6 +14,148 @@ public class ServiceComponent implements CommandProvider {
 
 	// private DictionaryService dictionary;
 
+	public void start() {
+		System.out.println("Activate CommandService .");
+		if (System.getProperty("import_from_dl") !=null && 
+				System.getProperty("import_from_dl").contains("true"))
+		{
+			
+			//CommandInterpreter ci = null;
+			System.out.println("Start import from datalogger folder");
+		
+		
+		// Only one instance of sensetrace allowed, when importing data or
+		// creating
+		// virtual ds. To do this lock file...
+		if (filelock.LockFile()) {
+		} else {
+			System.out.println("File allready locked. Exit Programm");
+			System.exit(0);
+		}
+		timer.SetKillAfterOneHour(false);
+		boolean downloadfromcsv = false;
+		boolean downloadfromsolarlogjs = false;
+		boolean downloadfromdatalogger_ftp = false;
+		boolean downloadfromdatalogger_folder = true;
+		boolean generate_v_data_stream = false;
+		/*
+		 * controlservice.CalcAvgsForErrorSensors(); try { Thread.sleep(20000);
+		 * } catch (InterruptedException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
+
+
+			controlservice.SetTimeIntervallFromLastImportTillNow();
+			// Disable avg check, else program would hang if sensor fails
+			controlservice.Setcheck_if_avg_exists(false);
+			// first initialize cep
+			controlservice.SetLastImportDateToNull();
+			controlservice.Init(true);
+
+		
+				// Check if the count of csv files matches
+				controlservice.CheckNumberOfCSVFiles();
+
+			
+			generate_v_data_stream = false;
+			downloadfromcsv = false;
+
+			// First import the data
+			controlservice.start(false, downloadfromcsv,
+					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
+					downloadfromsolarlogjs, generate_v_data_stream);
+			// Generate a sensor datastream from lastimport to now
+
+			downloadfromcsv = false;
+			downloadfromdatalogger_ftp = false;
+			downloadfromdatalogger_folder = false;
+			generate_v_data_stream = true;
+			// controlservice.SetTimeIntervallFromLastImportTillNow();
+			// At first classification and errorcheck for 1 second data
+			// in one day window
+			// Average is calculated automatically
+			boolean errorcheck_static = true;
+			boolean errorcheck_dynamic = true;
+			boolean classify = true;
+			System.out
+					.println("1) classification and errorcheck in one day intervall of one second data.");
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// controlservice.SetTimeIntervallFromLastImportTillNow();
+			// System.out.println("SetVirtualDsOptions");
+			controlservice.SetVirtualDsOptions(classify, errorcheck_dynamic,
+					errorcheck_static);
+			controlservice.SetWindowAndResolution("1day",
+					new String[] { "1sec" });
+			// System.out.println("Start import");
+			// controlservice.DeleteFromCLTable(true);
+			controlservice.start(false, downloadfromcsv,
+					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
+					downloadfromsolarlogjs, generate_v_data_stream);
+			// Averages for errorsensors are calculated automatically, now
+			// calculate avgs of other sensors also
+			// controlservice.CalcAvgsForGivenSensors();
+			System.out
+					.println("2) classification and errorcheck in one day intervall");
+			controlservice.CalcAvgsForAllSensors();
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// At second classification and errorcheck in one day interval
+			// in one day window
+			errorcheck_static = false;
+			errorcheck_dynamic = true;
+			classify = true;
+			// controlservice.SetTimeIntervallFromLastImportTillNow();
+			controlservice.SetVirtualDsOptions(classify, errorcheck_dynamic,
+					errorcheck_static);
+			controlservice.SetWindowAndResolution("1day", new String[] {
+					"1min", "1h", "15min" });
+			controlservice.start(false, downloadfromcsv,
+					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
+					downloadfromsolarlogjs, generate_v_data_stream);
+			System.out
+					.println("3)classification and errorcheck in one day intervall in year timewindow");
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// At third classification and errorcheck from
+			// begin of month till now in year timewindow
+			errorcheck_static = false;
+			errorcheck_dynamic = true;
+			classify = true;
+			controlservice
+					.SetTimeIntervallFromTwoMonthBeforeLastImportTillNow();
+			controlservice.SetVirtualDsOptions(classify, errorcheck_dynamic,
+					errorcheck_static);
+			controlservice.SetWindowAndResolution("1year", new String[] {
+					"1day", "1month" });
+			controlservice.start(false, downloadfromcsv,
+					downloadfromdatalogger_ftp, downloadfromdatalogger_folder,
+					downloadfromsolarlogjs, generate_v_data_stream);
+			controlservice.CalcAvgsForErrorSensors();
+			controlservice.SetLastImportDate();
+			controlservice.SendMail();
+   		System.exit(0);
+	
+	}
+	}
+
+	
+	
 	public void _calc_avgs(CommandInterpreter ci) {
 		timer.SetKillAfterOneHour(false);
 		System.out.println("Init configuration and sensor-xml-files.");
@@ -57,6 +199,7 @@ public class ServiceComponent implements CommandProvider {
 	}
 
 	public void _import_from(CommandInterpreter ci) {
+		
 		// Only one instance of sensetrace allowed, when importing data or
 		// creating
 		// virtual ds. To do this lock file...

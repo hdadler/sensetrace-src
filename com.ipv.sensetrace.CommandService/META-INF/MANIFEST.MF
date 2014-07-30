@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: CommandService
 Bundle-SymbolicName: com.ipv.sensetrace.CommandService
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: com.ipv.sensetrace.commandservice.CommandService
 Bundle-Vendor: IPV
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.ipv.sensetrace.controllingservice,

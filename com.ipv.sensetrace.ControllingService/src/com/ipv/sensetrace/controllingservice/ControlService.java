@@ -72,9 +72,9 @@ public class ControlService implements IControlService {
 
 	}
 
-	void activate() {
+	/*void activate() {
 		System.out.println("Activate ControlService.");
-	}
+	}*/
 
 	public void DeleteFromCLTable(boolean justavgs) {
 		pgsqlservice.DeleteFromCLTable(rdfservice.GetCLIds(true),

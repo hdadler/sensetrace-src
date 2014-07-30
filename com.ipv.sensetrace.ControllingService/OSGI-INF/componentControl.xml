@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" enabled="true" immediate="true" name="com.ipv.sensetrace.controllingservice.ControlService">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" immediate="true" name="com.ipv.sensetrace.controllingservice.ControlService">
    <implementation class="com.ipv.sensetrace.controllingservice.ControlService"/>
    <reference bind="RegPgService" cardinality="1..1" interface="com.ipv.sensetrace.pgsqlservice.IPgService" name="IPgService" policy="static" unbind="UnregPgService"/>
    <reference bind="RegRDFDmService" cardinality="1..1" interface="com.ipv.sensetrace.rdfdmservice.IRDFDmService" name="IRDFDmService" policy="static" unbind="UnregRDFDmService"/>
