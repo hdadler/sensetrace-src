@@ -21,9 +21,16 @@ public class RDFResultSensors {
 
 	// static Model tmpmodel=null;
 	//Don not query the deactive sensors
-	public void QuerySensors(Model model) {
-
-		// Der RDF-Store wird abgefragt mit einem SPARQL-Befehl um mysqlid,
+	public void QuerySensors(Model model, boolean delphin) {
+		String csvarray="";
+		String solarlogfolderlink="";
+		
+		if (delphin)
+		{
+		 csvarray="?o dc:csvarray ?csvarray.";
+		 solarlogfolderlink="?p dc:solarlogfolderlink ?solarlogfolderlink .";
+		}
+		 // Der RDF-Store wird abgefragt mit einem SPARQL-Befehl um mysqlid,
 		// postresid,
 		// lowerlimit und upperlimit zu ermitteln. Die Antwort erhalten wir als
 		String queryString = "PREFIX dc:      <http://purl.org/dc/elements/1.1/> "
@@ -34,7 +41,8 @@ public class RDFResultSensors {
 				+ "WHERE { "
 				+ "?o dc:definition ?definition."
 				+ "?o dc:lowerlimit ?lowerlimit."
-				+ "?o dc:csvarray ?csvarray."
+				+ csvarray
+				//+ "?o dc:csvarray ?csvarray."
 				+ "?o dc:upperlimit ?upperlimit."
 				+ "?o dc:differencetopreviousvalue ?differencetopreviousvalue."
 				+ "?o dc:mysqlid ?mysqlid."
@@ -42,15 +50,23 @@ public class RDFResultSensors {
 				+ "?p dc:sens ?o."
 				+ "?p dc:ftp ?ftplink ."
 				+ "?p dc:dlfolderlink ?dlfolderlink ."
-				+ "?p dc:solarlogfolderlink ?solarlogfolderlink ."
+				+ solarlogfolderlink
+				//+ "?p dc:solarlogfolderlink ?solarlogfolderlink ."
 				+ " FILTER (NOT EXISTS { ?o dc:active \"false\". } ) } order by ?mysqlid";
 		 System.out.println(queryString);
 		query(model, queryString);
 		//printquery();
 	}
 
-	public void QueryAllSensors(Model model) {
-
+	public void QueryAllSensors(Model model, boolean delphin) {
+		String csvarray="";
+		String solarlogfolderlink="";
+		
+		if (delphin)
+		{
+		 csvarray="?o dc:csvarray ?csvarray.";
+		 solarlogfolderlink="?p dc:solarlogfolderlink ?solarlogfolderlink .";
+		}
 		// Der RDF-Store wird abgefragt mit einem SPARQL-Befehl um mysqlid,
 		// postresid,
 		// lowerlimit und upperlimit zu ermitteln. Die Antwort erhalten wir als
@@ -61,7 +77,7 @@ public class RDFResultSensors {
 				+ "SELECT  ?mysqlid ?postgresid ?definition ?lowerlimit ?csvarray ?upperlimit ?ftplink ?dlfolderlink  ?solarlogfolderlink ?differencetopreviousvalue "
 				+ "WHERE { "
 				+ "?o dc:definition ?definition."
-				+ "?o dc:csvarray ?csvarray."
+				+ csvarray
 				+ "?o dc:lowerlimit ?lowerlimit."
 				+ "?o dc:upperlimit ?upperlimit."
 				+ "?o dc:differencetopreviousvalue ?differencetopreviousvalue."
@@ -70,7 +86,7 @@ public class RDFResultSensors {
 				+ "?p dc:sens ?o."
 				+ "?p dc:ftp ?ftplink ."
 				+ "?p dc:dlfolderlink ?dlfolderlink ."
-				+ "?p dc:solarlogfolderlink ?solarlogfolderlink ."
+				+ solarlogfolderlink
 				+ " } order by ?mysqlid";
 		 System.out.println(queryString);
 		System.out.println("Query all sensors!");

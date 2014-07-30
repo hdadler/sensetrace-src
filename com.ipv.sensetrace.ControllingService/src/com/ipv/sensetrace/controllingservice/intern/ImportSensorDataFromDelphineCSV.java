@@ -54,7 +54,7 @@ public class ImportSensorDataFromDelphineCSV {
 		// Look for last point in database for every sensor
 
 		// Catch sensordate to be downloaded from datalogger (all sensors)
-		rdfservice.QuerySensors();
+		rdfservice.QuerySensors(false);
 		//System.out.println("after querysensors");
 
 		String postgresid = "-1";

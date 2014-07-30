@@ -50,7 +50,7 @@ public class ImportDataloggerFTP {
 		// Look for last point in database for every sensor
 
 		// Catch sensordate to be downloaded from datalogger (all sensors)
-		rdfservice.QuerySensors();
+		rdfservice.QuerySensors(false);
 		String postgresid = "-1";
 		String ftplink = "";
 		String definition = "";

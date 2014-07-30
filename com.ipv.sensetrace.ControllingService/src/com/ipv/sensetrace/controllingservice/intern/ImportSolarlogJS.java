@@ -51,7 +51,7 @@ public class ImportSolarlogJS {
 
 
 		// Catch sensordate to be downloaded from datalogger (all sensors)
-		rdfservice.QuerySensors();
+		rdfservice.QuerySensors(true);
 		//System.out.println("after querysensors");
 
 		// String sensorname = "W_alpha_1Sec";

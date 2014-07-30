@@ -13,9 +13,9 @@ public interface IRDFDmService {
 	
 	String GetNextSensor(String key);
 
-	void QueryAllSensors();
+	void QueryAllSensors(boolean solarlog);
 
-	void QuerySensors();
+	void QuerySensors(boolean solarlog);
 
 
 	String ResolveSensor(String id, boolean active);

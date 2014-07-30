@@ -67,7 +67,7 @@ public class ImportDataloggerFolder {
 		// Look for last point in database for every sensor
 
 		// Catch sensordate to be downloaded from datalogger (all sensors)
-		rdfservice.QuerySensors();
+		rdfservice.QuerySensors(false);
 		//System.out.println("after querysensors");
 
 		String postgresid = "-1";
@@ -81,6 +81,7 @@ public class ImportDataloggerFolder {
 		String lowerlimit = rdfservice.GetNextSensor("lowerlimit");
 		String upperlimit = rdfservice.GetNextSensor("upperlimit");
 		//go to sensor 122
+	//	System.out.println("postgresid: " +postgresid);
 /*
 while (!postgresid.equals("106")) {
 //		while (!postgresid.equals("172")) {
@@ -91,7 +92,7 @@ while (!postgresid.equals("106")) {
 			 upperlimit = rdfservice.GetNextSensor("upperlimit");
 		}*/
 		while (/*(!postgresid.equals("122")) && */(postgresid != null)) {
-
+		//	System.out.println("postgresid: " +postgresid);
 			System.out.println("Import Sensor with postgresid: " + postgresid
 					+ " Definition: " + definition +" dlfilenamelink: " +dlfilenamelink);
 		

@@ -308,7 +308,7 @@ public class ImportSensorDataFromPg {
 			 * TODO Auto-generated catch block e.printStackTrace(); }
 			 */
 
-			rdfservice.QueryAllSensors();
+			rdfservice.QueryAllSensors(false);
 			// String mysqlid = rdfservice.GetNextSensor("mysqlid");
 			// If in jtalis-only mode, catch data only for sensors we need!
 			String postgresid = rdfservice.GetNextSensor("postgresid");

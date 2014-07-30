@@ -111,13 +111,13 @@ public class RDFDmService implements IRDFDmService {
 
 	// Not the deactived sensors
 	@Override
-	public void QuerySensors() {
-		rdfsensorresult.QuerySensors(rdfmodel.GetModel());
+	public void QuerySensors(boolean solarlog) {
+		rdfsensorresult.QuerySensors(rdfmodel.GetModel(),solarlog);
 	}
 
 	@Override
-	public void QueryAllSensors() {
-		rdfsensorresult.QueryAllSensors(rdfmodel.GetModel());
+	public void QueryAllSensors(boolean solarlog) {
+		rdfsensorresult.QueryAllSensors(rdfmodel.GetModel(),solarlog);
 	}
 
 	/*

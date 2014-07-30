@@ -197,7 +197,7 @@ public class DelphinCSVService implements IDelphinCSVService {
 		long date_ts_lowest = 0;
 
 		for (int i = 0; i < SearchedFiles.size(); i++) {
-			System.out.println("SearchedFiles.get(i): " + SearchedFiles.get(i));
+			//System.out.println("SearchedFiles.get(i): " + SearchedFiles.get(i));
 			date_str = SearchedFiles.get(i).split("_")[4] + "_"
 					+ SearchedFiles.get(i).split("_")[5];
 			// System.out.println("date_str: " + date_str);
